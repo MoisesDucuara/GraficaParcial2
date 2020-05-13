@@ -30,7 +30,16 @@ class Jugador(pygame.sprite.Sprite):
     def update(self):
         self.rect.x+=self.velxp
         self.rect.x+=self.velxn
+
+        if self.rect.x > (ANCHO-200):
+            self.rect.x = ANCHO-200
+            f.velxp=-5
+        elif self.rect.x < 150:
+            self.rect.x = 150
+            f.velxn=5
+
         '''
+
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
             if self.velx > 0:
@@ -45,6 +54,13 @@ class Jugador(pygame.sprite.Sprite):
 
         self.rect.y+=self.velyp
         self.rect.y+=self.velyn
+
+        if self.rect.y > (ALTO-110):
+            self.rect.y = ALTO-110
+            f.velyp=-5
+        elif self.rect.y < 70:
+            self.rect.y = 70
+            f.velyn=5
         '''
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
@@ -58,56 +74,82 @@ class Jugador(pygame.sprite.Sprite):
                     self.vely=0
                     '''
 
-pygame.init()
-#Definicion de variables
-reloj=pygame.time.Clock()
-ventana=pygame.display.set_mode([ANCHO,ALTO])
+class Fondo(pygame.sprite.Sprite):
+    def __init__(self,img,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=img
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.velxp=0
+        self.velxn=0
+        self.velyp=0
+        self.velyn=0
 
-fondo=pygame.image.load('fondo.png')
+    def update(self):
+        self.rect.x+=self.velxp
+        self.rect.x+=self.velxn
+        self.rect.y+=self.velyp
+        self.rect.y+=self.velyn
 
-jugadores=pygame.sprite.Group()
+if __name__ == '__main__':
+    pygame.init()
+    #Definicion de variables
+    reloj=pygame.time.Clock()
+    ventana=pygame.display.set_mode([ANCHO,ALTO])
 
-j=Jugador([200,250])
-jugadores.add(j)
+    fondo_img=pygame.image.load('fondo.png')
 
-fin=False
-while not fin:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            fin=True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                j.velxp=5
-                #j.vely=0
-            elif event.key == pygame.K_LEFT:
-                j.velxn=-5
-                #j.vely=0
-            elif event.key == pygame.K_UP:
-                j.velyn=-5
-                #j.velx=0
-            elif event.key == pygame.K_DOWN:
-                j.velyp=5
-                #j.velx=0
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_RIGHT:
-                j.velxp=0
-            elif event.key == pygame.K_LEFT:
-                j.velxn=0
-                #j.vely=0
-            elif event.key == pygame.K_UP:
-                j.velyn=0
-                #j.velx=0
-            elif event.key == pygame.K_DOWN:
-                j.velyp=0
-                #j.velx=0
+    jugadores=pygame.sprite.Group()
+    fondos=pygame.sprite.Group()
+
+    j=Jugador([260,170])
+    jugadores.add(j)
+
+    f=Fondo(fondo_img,[0,0])
+    fondos.add(f)
+
+    fin=False
+    while not fin:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin=True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    j.velxp=5
+                    #j.vely=0
+                elif event.key == pygame.K_LEFT:
+                    j.velxn=-5
+                    #j.vely=0
+                elif event.key == pygame.K_UP:
+                    j.velyn=-5
+                    #j.velx=0
+                elif event.key == pygame.K_DOWN:
+                    j.velyp=5
+                    #j.velx=0
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RIGHT:
+                    j.velxp=0
+                    f.velxp=0
+                elif event.key == pygame.K_LEFT:
+                    j.velxn=0
+                    f.velxn=0
+                elif event.key == pygame.K_UP:
+                    j.velyn=0
+                    f.velyn=0
+                elif event.key == pygame.K_DOWN:
+                    j.velyp=0
+                    f.velyp=0
 
 
-    #Actualizacion de objetos
-    jugadores.update()
+        #Actualizacion de objetos
+        jugadores.update()
+        fondos.update()
 
-    #Actualizacon de imagenes
-    #ventana.fill(NEGRO)
-    ventana.blit(fondo,[0,0])
-    jugadores.draw(ventana)
-    pygame.display.flip()
-    reloj.tick(60)
+        #Actualizacon de imagenes
+        ventana.fill(NEGRO)
+        #ventana.blit(fondo_img,[0,0])
+        fondos.draw(ventana)
+        jugadores.draw(ventana)
+        pygame.display.flip()
+        reloj.tick(60)
