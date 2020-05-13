@@ -17,17 +17,21 @@ ls_col=None
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([50,50])
+        self.image=pygame.Surface([50,50]) # Revisar esta instruccion con: ([50,50],32,32)
         self.image.fill(ROJO)
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
         self.rect.y=pos[1]
-        self.velx=0
-        self.vely=0
+        self.velxp=0
+        self.velxn=0
+        self.velyp=0
+        self.velyn=0
         self.bloques=None
 
+
     def update(self):
-        self.rect.x+=self.velx
+        self.rect.x+=self.velxp
+        self.rect.x+=self.velxn
         '''
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
@@ -41,7 +45,8 @@ class Jugador(pygame.sprite.Sprite):
                     self.velx=0
                     '''
 
-        self.rect.y+=self.vely
+        self.rect.y+=self.velyp
+        self.rect.y+=self.velyn
         '''
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
@@ -70,21 +75,38 @@ while not fin:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             fin=True
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
-                j.velx=5
+                j.velxp=5
+                #j.vely=0
             elif event.key == pygame.K_LEFT:
-                j.velx=-5
+                j.velxn=-5
+                #j.vely=0
             elif event.key == pygame.K_UP:
-                j.vely=-5
+                j.velyn=-5
+                #j.velx=0
             elif event.key == pygame.K_DOWN:
-                j.vely=5
-        elif event.type == pygame.KEYUP:
-            j.velx=0
-            j.vely=0
+                j.velyp=5
+                #j.velx=0
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_RIGHT:
+                j.velxp=0
+            elif event.key == pygame.K_LEFT:
+                j.velxn=0
+                #j.vely=0
+            elif event.key == pygame.K_UP:
+                j.velyn=0
+                #j.velx=0
+            elif event.key == pygame.K_DOWN:
+                j.velyp=0
+                #j.velx=0
 
-    ventana.fill(NEGRO)
+
+    #Actualizacion de objetos
     jugadores.update()
+
+    #Actualizacon de imagenes
+    ventana.fill(NEGRO)
     jugadores.draw(ventana)
     pygame.display.flip()
     reloj.tick(60)
