@@ -12,8 +12,6 @@ ROJO=[255,0,0]
 VERDE=[0,255,0]
 AZUL=[0,0,255]
 
-ls_col=None
-
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,pos):
         pygame.sprite.Sprite.__init__(self)
@@ -65,6 +63,8 @@ pygame.init()
 reloj=pygame.time.Clock()
 ventana=pygame.display.set_mode([ANCHO,ALTO])
 
+fondo=pygame.image.load('fondo.png')
+
 jugadores=pygame.sprite.Group()
 
 j=Jugador([200,250])
@@ -106,7 +106,8 @@ while not fin:
     jugadores.update()
 
     #Actualizacon de imagenes
-    ventana.fill(NEGRO)
+    #ventana.fill(NEGRO)
+    ventana.blit(fondo,[0,0])
     jugadores.draw(ventana)
     pygame.display.flip()
     reloj.tick(60)
