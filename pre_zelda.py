@@ -28,9 +28,9 @@ class Fondo(pygame.sprite.Sprite):
         print "f.velx: "+str(self.velx)
 
 class Jugador(pygame.sprite.Sprite):
-    def __init__(self,pos):
+    def __init__(self,pos=[190,150]):
         pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([50,50])
+        self.image=pygame.Surface([35,35])
         self.image.fill(ROJO)
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     reloj=pygame.time.Clock()
     ventana=pygame.display.set_mode([ANCHO,ALTO],32) # Revisar esta instruccion con: ([ANCHO,ALTO],32,32)
 
-    fondo_img=pygame.image.load('fondo.png')
+    fondo_img=pygame.image.load('fondo2.png')
 
     fondos=pygame.sprite.Group()
     jugadores=pygame.sprite.Group()
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     f=Fondo(fondo_img,[0,0])
     fondos.add(f)
 
-    j=Jugador([260,170])
+    j=Jugador()
     jugadores.add(j)
 
     b=Bloque([300,300],200,120)
