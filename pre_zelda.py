@@ -44,43 +44,9 @@ class Jugador(pygame.sprite.Sprite):
 
     def update(self):
 
-        self.rect.x+=self.velxp+self.velxn
-        #print "j.velxn: "+str(self.velxn)
-        #print "j.velxp: "+str(self.velxp)
-        #self.rect.x+=self.velxp
-        #self.rect.x+=self.velxn
 
-        ls_col=pygame.sprite.spritecollide(self,bloques,False)
-        for b in ls_col:
-            if (self.velxp+self.velxn) > 0:
-                if self.rect.right > b.rect.left:
-                    self.rect.right = b.rect.left
-                    j.velxp=0
-                    f.velx=0
-                    for be in bloques:
-                        be.velx=0
-            elif self.velxn < 0:
-                if self.rect.left < b.rect.right:
-                    self.rect.left = b.rect.right
-                    j.velxn=0
-                    f.velx=0
-                    for be in bloques:
-                        be.velx=0
-
-        if self.rect.x > (ANCHO-200):
-            self.rect.x = ANCHO-200
-            f.velx=-5
-            for b in bloques:
-                b.velx=-5
-        elif self.rect.x < 150:
-            self.rect.x = 150
-            f.velx=5
-            for b in bloques:
-                b.velx=5
 
         self.rect.y+=self.velyp+self.velyn
-        #self.rect.y+=self.velyp
-        #self.rect.y+=self.velyn
 
         if self.rect.y > (ALTO-110):
             self.rect.y = ALTO-110
@@ -98,17 +64,44 @@ class Jugador(pygame.sprite.Sprite):
             if (self.velyp+self.velyn) > 0:
                 if self.rect.bottom > b.rect.top:
                     self.rect.bottom = b.rect.top
-                    j.velyp=0
                     f.vely=0
                     for be in bloques:
                         be.vely=0
-            elif self.velyn < 0:
+            elif (self.velyp+self.velyn) < 0:
                 if self.rect.top < b.rect.bottom:
                     self.rect.top = b.rect.bottom
-                    j.velyn=0
                     f.vely=0
                     for be in bloques:
                         be.vely=0
+
+
+        self.rect.x+=self.velxp+self.velxn
+
+        ls_col=pygame.sprite.spritecollide(self,bloques,False)
+        for b in ls_col:
+            if (self.velxp+self.velxn) > 0:
+                if self.rect.right > b.rect.left:
+                    self.rect.right = b.rect.left
+                    f.velx=0
+                    for be in bloques:
+                        be.velx=0
+            elif (self.velxp+self.velxn) < 0:
+                if self.rect.left < b.rect.right:
+                    self.rect.left = b.rect.right
+                    f.velx=0
+                    for be in bloques:
+                        be.velx=0
+
+        if self.rect.x > (ANCHO-200):
+            self.rect.x = ANCHO-200
+            f.velx=-5
+            for b in bloques:
+                b.velx=-5
+        elif self.rect.x < 150:
+            self.rect.x = 150
+            f.velx=5
+            for b in bloques:
+                b.velx=5
 
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,pos,d_an,d_al,cl=VERDE):
@@ -132,7 +125,7 @@ if __name__ == '__main__':
     reloj=pygame.time.Clock()
     ventana=pygame.display.set_mode([ANCHO,ALTO],32) # Revisar esta instruccion con: ([ANCHO,ALTO],32,32)
 
-    fondo_img=pygame.image.load('fondo2.png')
+    fondo_img=pygame.image.load('fondo.png')
 
     fondos=pygame.sprite.Group()
     jugadores=pygame.sprite.Group()
