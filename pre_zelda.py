@@ -47,39 +47,41 @@ class Jugador(pygame.sprite.Sprite):
 
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
-            if (self.velyp > 0):
-                if self.rect.bottom > b.rect.top:
-                    print "Colision 1"
-                    self.rect.bottom = b.rect.top
-                    f.vely=0
-                    for be in bloques:
-                        be.vely=0
-            elif (self.velyn < 0):
-                if self.rect.top < b.rect.bottom:
-                    print "Colision 2"
-                    self.rect.top = b.rect.bottom
-                    f.vely=0
-                    for be in bloques:
-                        be.vely=0
+            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+5):
+                print "Colision 1"
+                self.velyp=0
+                self.rect.bottom = b.rect.top
+                f.vely=0
+                for be in bloques:
+                    be.vely=0
+            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-5):
+                print "Colision 2"
+                self.velyn=0
+                self.rect.top = b.rect.bottom
+                f.vely=0
+                for be in bloques:
+                    be.vely=0
 
         self.rect.x+=self.velxp+self.velxn
 
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
-            if (self.velxp > 0):
-                if self.rect.right > b.rect.left:
-                    print "Colision 3"
-                    self.rect.right = b.rect.left
-                    f.velx=0
-                    for be in bloques:
-                        be.velx=0
-            elif (self.velxn < 0):
-                if self.rect.left < b.rect.right:
-                    print "Colision 4"
-                    self.rect.left = b.rect.right
-                    f.velx=0
-                    for be in bloques:
-                        be.velx=0
+            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+5):
+                print "Colision 1"
+                self.velxp=0
+                self.rect.right = b.rect.left
+                f.velx=0
+                for be in bloques:
+                    be.velx=0
+            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-5):
+                print "Colision 2"
+                self.velxn=0
+                self.rect.left = b.rect.right
+                f.velx=0
+                for be in bloques:
+                    be.velx=0
+
+
 
         if self.rect.y > (ALTO-110):
             print "Caja 1"
@@ -156,20 +158,20 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
                     j.velxp=5
-                    j.velyp=0
-                    j.velyn=0
+                    #j.velyp=0
+                    #j.velyn=0
                 elif event.key == pygame.K_LEFT:
                     j.velxn=-5
-                    j.velyp=0
-                    j.velyn=0
+                    #j.velyp=0
+                    #j.velyn=0
                 elif event.key == pygame.K_UP:
                     j.velyn=-5
-                    j.velxp=0
-                    j.velxn=0
+                    #j.velxp=0
+                    #j.velxn=0
                 elif event.key == pygame.K_DOWN:
                     j.velyp=5
-                    j.velxp=0
-                    j.velxn=0
+                    #j.velxp=0
+                    #j.velxn=0
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
                     j.velxp=0
