@@ -12,6 +12,16 @@ ROJO=[255,0,0]
 VERDE=[0,255,0]
 AZUL=[0,0,255]
 
+def recorte(img,fil,col):
+    m=[]
+    for i in range(fil):
+        fila=[]
+        for j in range(col):
+            cuadro=img.subsurface(j*32,i*32,32,32)
+            fila.append(cuadro)
+        m.append(fila)
+    return m
+
 class Fondo(pygame.sprite.Sprite):
     def __init__(self,img,pos):
         pygame.sprite.Sprite.__init__(self)
@@ -39,7 +49,6 @@ class Jugador(pygame.sprite.Sprite):
         self.velyp=0
         self.velyn=0
         #self.bloques=None
-
 
     def update(self):
 
@@ -81,8 +90,6 @@ class Jugador(pygame.sprite.Sprite):
                 for be in bloques:
                     be.velx=0
 
-
-
         if self.rect.y > (ALTO-110):
             print "Caja 1"
             self.rect.y = ALTO-110
@@ -111,10 +118,9 @@ class Jugador(pygame.sprite.Sprite):
                 b.velx=5
 
 class Bloque(pygame.sprite.Sprite):
-    def __init__(self,pos,d_an,d_al,cl=VERDE):
+    def __init__(self,img,pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([d_an,d_al])
-        self.image.fill(cl)
+        self.image=img
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
         self.rect.y=pos[1]
@@ -133,6 +139,7 @@ if __name__ == '__main__':
     ventana=pygame.display.set_mode([ANCHO,ALTO],32) # Revisar esta instruccion con: ([ANCHO,ALTO],32,32)
 
     fondo_img=pygame.image.load('fondo3.png')
+    tileset_img=pygame.image.load('set_rpg.png')
 
     fondos=pygame.sprite.Group()
     jugadores=pygame.sprite.Group()
@@ -146,10 +153,12 @@ if __name__ == '__main__':
     '''
     b=Bloque([300,300],200,120)
     bloques.add(b)
-
-    b=Bloque([400,250],100,300,HABANO)
-    bloques.add(b)
     '''
+
+    matriz_imagenes=recorte(tileset_img,63,32)
+    sub_img=matriz_imagenes[60][30]
+    b=Bloque(sub_img,[200,120])
+    bloques.add(b)
 
     fin=False
     while not fin:
