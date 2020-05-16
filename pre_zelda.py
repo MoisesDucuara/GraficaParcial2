@@ -138,17 +138,18 @@ if __name__ == '__main__':
     jugadores=pygame.sprite.Group()
     bloques=pygame.sprite.Group()
 
-    f=Fondo(fondo_img,[0,0])
+    f=Fondo(fondo_img,[-250,-200])
     fondos.add(f)
 
     j=Jugador()
     jugadores.add(j)
-
+    '''
     b=Bloque([300,300],200,120)
     bloques.add(b)
 
     b=Bloque([400,250],100,300,HABANO)
     bloques.add(b)
+    '''
 
     fin=False
     while not fin:
