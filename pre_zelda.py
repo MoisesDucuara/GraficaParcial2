@@ -40,7 +40,7 @@ class Fondo(pygame.sprite.Sprite):
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,pos=[190,150]):
         pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([32,32])
+        self.image=pygame.Surface([32,48])
         self.image.fill(ROJO)
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
@@ -270,20 +270,20 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
                     j.velxp=5
-                    #j.velyp=0
-                    #j.velyn=0
+                    j.velyp=0
+                    j.velyn=0
                 elif event.key == pygame.K_LEFT:
                     j.velxn=-5
-                    #j.velyp=0
-                    #j.velyn=0
+                    j.velyp=0
+                    j.velyn=0
                 elif event.key == pygame.K_UP:
                     j.velyn=-5
-                    #j.velxp=0
-                    #j.velxn=0
+                    j.velxp=0
+                    j.velxn=0
                 elif event.key == pygame.K_DOWN:
                     j.velyp=5
-                    #j.velxp=0
-                    #j.velxn=0
+                    j.velxp=0
+                    j.velxn=0
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
                     j.velxp=0
