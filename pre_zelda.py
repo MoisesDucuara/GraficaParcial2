@@ -49,16 +49,18 @@ class Jugador(pygame.sprite.Sprite):
         self.velxn=0
         self.velyp=0
         self.velyn=0
+        self.vely_mojado=0
+        self.velx_mojado=0
         self.vida=100
         #self.bloques=None
 
     def update(self):
 
-        self.rect.y+=self.velyp+self.velyn
+        self.rect.y+=self.velyp+self.velyn+self.vely_mojado
 
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
-            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+5):
+            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+8):
                 #print "Colision 1"
                 self.velyp=0
                 self.rect.bottom = b.rect.top
@@ -69,7 +71,7 @@ class Jugador(pygame.sprite.Sprite):
                     be.vely=0
                 for be in bloques_lava:
                     be.vely=0
-            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-5):
+            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-8):
                 #print "Colision 2"
                 self.velyn=0
                 self.rect.top = b.rect.bottom
@@ -81,20 +83,11 @@ class Jugador(pygame.sprite.Sprite):
                 for be in bloques_lava:
                     be.vely=0
 
-        ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
-        for b in ls_agua:
-            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+5):
-                #print "Agua 1"
-                self.velyp=3
-            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-5):
-                #print "Agua 2"
-                self.velyn=-2
-
-        self.rect.x+=self.velxp+self.velxn
+        self.rect.x+=self.velxp+self.velxn+self.velx_mojado
 
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
-            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+5):
+            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+8):
                 #print "Colision 3"
                 self.velxp=0
                 self.rect.right = b.rect.left
@@ -105,7 +98,7 @@ class Jugador(pygame.sprite.Sprite):
                     be.velx=0
                 for be in bloques_lava:
                     be.velx=0
-            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-5):
+            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-8):
                 #print "Colision 4"
                 self.velxn=0
                 self.rect.left = b.rect.right
@@ -117,20 +110,24 @@ class Jugador(pygame.sprite.Sprite):
                 for be in bloques_lava:
                     be.velx=0
 
-        ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
-        for b in ls_agua:
-            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+5):
-                #print "Agua 3"
-                self.velxp=3
-            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-5):
-                #print "Agua 4"
-                self.velxn=3
-
         ls_lava=pygame.sprite.spritecollide(self,bloques_lava,False)
         if ls_lava != []:
             self.vida-=1
 
-        print self.vida
+        ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
+        if ls_agua != []:
+            self.vely_mojado=3
+            if self.velxp+self.velxn==0:
+                self.velx_mojado=0
+            elif self.velxp+self.velxn>0:
+                self.velx_mojado=-3
+            elif self.velxp+self.velxn<0:
+                self.velx_mojado=3
+        else:
+            self.vely_mojado=0
+            self.velx_mojado=0
+
+
         if self.rect.y > (ALTO-110):
             #print "Caja 1"
             self.rect.y = ALTO-110
@@ -145,24 +142,41 @@ class Jugador(pygame.sprite.Sprite):
             #print "Caja 2"
             self.rect.y = 70
             f.vely=5
-            for b in bloques:
-                b.vely=5
-            for bf in bloques_agua:
-                bf.vely=5
-            for bf in bloques_lava:
-                bf.vely=5
+            if ls_agua!=[]:
+                f.vely=2
+                for b in bloques:
+                    b.vely=2
+                for bf in bloques_agua:
+                    bf.vely=2
+                for bf in bloques_lava:
+                    bf.vely=2
+            else:
+                for b in bloques:
+                    b.vely=5
+                for bf in bloques_agua:
+                    bf.vely=5
+                for bf in bloques_lava:
+                    bf.vely=5
 
         if self.rect.x > (ANCHO-200):
             #print "Caja 3"
             self.rect.x = ANCHO-200
-            self.velxp=0
             f.velx=-5
-            for b in bloques:
-                b.velx=-5
-            for bf in bloques_agua:
-                bf.velx=-5
-            for bf in bloques_lava:
-                bf.velx=-5
+            if ls_agua!=[]:
+                f.velx=-2
+                for b in bloques:
+                    b.velx=-2
+                for bf in bloques_agua:
+                    bf.velx=-2
+                for bf in bloques_lava:
+                    bf.velx=-2
+            else:
+                for b in bloques:
+                    b.velx=-5
+                for bf in bloques_agua:
+                    bf.velx=-5
+                for bf in bloques_lava:
+                    bf.velx=-5
         elif self.rect.x < 150:
             #print "Caja 4"
             self.rect.x = 150
@@ -308,6 +322,7 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in bloques_lava:
                         b.vely=0
+
                 elif event.key == pygame.K_DOWN:
                     j.velyp=0
                     f.vely=0
@@ -331,9 +346,9 @@ if __name__ == '__main__':
         #ventana.blit(fondo_img,[0,0])
         fondos.draw(ventana)
         jugadores.draw(ventana)
-        #bloques.draw(ventana)
-        #bloques_agua.draw(ventana)
-        #bloques_lava.draw(ventana)
+        bloques.draw(ventana)
+        bloques_agua.draw(ventana)
+        bloques_lava.draw(ventana)
         pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
         pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
         pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
