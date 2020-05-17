@@ -40,7 +40,7 @@ class Fondo(pygame.sprite.Sprite):
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,pos=[190,150]):
         pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([32,48])
+        self.image=pygame.Surface([32,32])
         self.image.fill(ROJO)
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
@@ -49,6 +49,7 @@ class Jugador(pygame.sprite.Sprite):
         self.velxn=0
         self.velyp=0
         self.velyn=0
+        self.vida=100
         #self.bloques=None
 
     def update(self):
@@ -83,16 +84,11 @@ class Jugador(pygame.sprite.Sprite):
         ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
         for b in ls_agua:
             if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+5):
-                print "Agua 1"
+                #print "Agua 1"
+                self.velyp=3
             elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-5):
-                print "Agua 2"
-
-        ls_lava=pygame.sprite.spritecollide(self,bloques_lava,False)
-        for b in ls_lava:
-            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+5):
-                print "Lava 1"
-            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-5):
-                print "Lava 2"
+                #print "Agua 2"
+                self.velyn=-2
 
         self.rect.x+=self.velxp+self.velxn
 
@@ -124,17 +120,17 @@ class Jugador(pygame.sprite.Sprite):
         ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
         for b in ls_agua:
             if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+5):
-                print "Agua 3"
+                #print "Agua 3"
+                self.velxp=3
             elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-5):
-                print "Agua 4"
+                #print "Agua 4"
+                self.velxn=3
 
         ls_lava=pygame.sprite.spritecollide(self,bloques_lava,False)
-        for b in ls_lava:
-            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+5):
-                print "Lava 3"
-            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-5):
-                print "Lava 4"
+        if ls_lava != []:
+            self.vida-=1
 
+        print self.vida
         if self.rect.y > (ALTO-110):
             #print "Caja 1"
             self.rect.y = ALTO-110
