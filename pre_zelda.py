@@ -38,10 +38,13 @@ class Fondo(pygame.sprite.Sprite):
         self.rect.y+=self.vely
 
 class Jugador(pygame.sprite.Sprite):
-    def __init__(self,pos=[190,150]):
+    def __init__(self,matriz_img,pos=[190,150]):
         pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([32,32])
-        self.image.fill(ROJO)
+        self.matriz_img=matriz_img
+        self.accion=0
+        self.cont_accion=0
+        self.lim_accion=[0,0,0,0,5,5,6,7,2,2,2,2]
+        self.image=self.matriz_img[self.accion][self.cont_accion]
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
         self.rect.y=pos[1]
@@ -52,6 +55,7 @@ class Jugador(pygame.sprite.Sprite):
         self.vely_mojado=0
         self.velx_mojado=0
         self.vida=100
+        self.espada=0
         #self.bloques=None
 
     def update(self):
@@ -131,62 +135,141 @@ class Jugador(pygame.sprite.Sprite):
         if self.rect.y > (ALTO-110):
             #print "Caja 1"
             self.rect.y = ALTO-110
+            self.velxp=0
+            self.velxn=0
             f.vely=-5
+            f.velx=0
             for b in bloques:
                 b.vely=-5
+                b.velx=0
             for bf in bloques_agua:
                 bf.vely=-5
+                bf.velx=0
             for bf in bloques_lava:
                 bf.vely=-5
+                bf.velx=0
         elif self.rect.y < 70:
             #print "Caja 2"
             self.rect.y = 70
-            f.vely=5
+            self.velxp=0
+            self.velxn=0
             if ls_agua!=[]:
                 f.vely=2
+                f.velx=0
                 for b in bloques:
                     b.vely=2
+                    b.velx=0
                 for bf in bloques_agua:
                     bf.vely=2
+                    bf.velx=0
                 for bf in bloques_lava:
                     bf.vely=2
+                    bf.velx=0
             else:
+                f.vely=5
+                f.velx=0
                 for b in bloques:
                     b.vely=5
+                    b.velx=0
                 for bf in bloques_agua:
                     bf.vely=5
+                    bf.velx=0
                 for bf in bloques_lava:
                     bf.vely=5
+                    bf.velx=0
 
         if self.rect.x > (ANCHO-200):
             #print "Caja 3"
             self.rect.x = ANCHO-200
-            f.velx=-5
+            self.velyp=0
+            self.velyn=0
             if ls_agua!=[]:
                 f.velx=-2
+                f.vely=0
                 for b in bloques:
                     b.velx=-2
+                    b.vely=0
                 for bf in bloques_agua:
                     bf.velx=-2
+                    bf.vely=0
                 for bf in bloques_lava:
                     bf.velx=-2
+                    bf.vely=0
             else:
+                f.velx=-5
+                f.vely=0
                 for b in bloques:
                     b.velx=-5
+                    b.vely=0
                 for bf in bloques_agua:
                     bf.velx=-5
+                    bf.vely=0
                 for bf in bloques_lava:
                     bf.velx=-5
+                    bf.vely=0
         elif self.rect.x < 150:
             #print "Caja 4"
             self.rect.x = 150
+            self.velyp=0
+            self.velyn=0
             f.velx=5
+            f.vely=0
             for b in bloques:
                 b.velx=5
+                b.vely=0
             for bf in bloques_agua:
                 bf.velx=5
+                bf.vely=0
             for bf in bloques_lava:
                 bf.velx=5
+                bf.vely=0
+
+        #Manejo de sprites jugador
+
+        if self.espada>=1 and self.espada<4:
+            if self.accion==0 or self.accion==4:
+                self.accion=8
+                if self.espada==1:
+                    esp=Bloque(personaje_img,[self.rect.right,self.rect.top])
+                    esp.image=pygame.Surface([16,32])
+                    esp.image.fill(AZUL)
+                    ataque_espada.add(esp)
+            elif self.accion==1 or self.accion==5:
+                self.accion=9
+            self.espada+=1
+        elif self.espada==4:
+            self.espada=0
+            if self.accion==8:
+                self.accion=0
+                ataque_espada.remove(ataque_espada)
+            if self.accion==9:
+                self.accion=1
+        else:
+            if self.velyn+self.velyp > 0:
+                self.accion=6
+            elif self.velyn+self.velyp < 0:
+                self.accion=7
+            elif self.velxn+self.velxp > 0:
+                self.accion=4
+            elif self.velxn+self.velxp < 0:
+                self.accion=5
+            elif self.velyn+self.velyp == 0:
+                if self.accion==6:
+                    self.accion=2
+                elif self.accion==7:
+                    self.accion=3
+            if self.velxn+self.velxp == 0:
+                if self.accion==4:
+                    self.accion=0
+                elif self.accion==5:
+                    self.accion=1
+
+        if self.cont_accion<self.lim_accion[self.accion]:
+            self.cont_accion+=1
+        else:
+            self.cont_accion=0
+
+        self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
@@ -212,29 +295,28 @@ if __name__ == '__main__':
     #carga de imagenes
     fondo_img=pygame.image.load('fondo3.png')
     tileset_img=pygame.image.load('set_rpg.png')
+    personaje_img=pygame.image.load('jugador.png')
 
-    #creacion de grupos
+    matriz_imagenes=recorte(tileset_img,63,32)
+    matriz_jugador=recorte(personaje_img,12,8)
+
+    #creacion de grupos y matriz de imagenes
     fondos=pygame.sprite.Group()
     jugadores=pygame.sprite.Group()
     bloques=pygame.sprite.Group()
     bloques_agua=pygame.sprite.Group()
     bloques_lava=pygame.sprite.Group()
+    ataque_espada=pygame.sprite.Group()
 
     #constructor del fondo
     f=Fondo(fondo_img,[-250,-200])
     fondos.add(f)
 
     #constructor del jugador
-    j=Jugador()
+    j=Jugador(matriz_jugador)
     jugadores.add(j)
-
-    '''
-    b=Bloque([300,300],200,120)
-    bloques.add(b)
-    '''
     #fin de contructor del jugador
 
-    matriz_imagenes=recorte(tileset_img,63,32)
     parser_bloque=ConfigParser.ConfigParser()
     parser_bloque.read('parcer_mapa.par')
 
@@ -294,6 +376,8 @@ if __name__ == '__main__':
                     j.velyp=5
                     j.velxp=0
                     j.velxn=0
+                elif event.key == pygame.K_c:
+                    j.espada=1
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
                     j.velxp=0
@@ -322,7 +406,6 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in bloques_lava:
                         b.vely=0
-
                 elif event.key == pygame.K_DOWN:
                     j.velyp=0
                     f.vely=0
@@ -349,9 +432,10 @@ if __name__ == '__main__':
         bloques.draw(ventana)
         bloques_agua.draw(ventana)
         bloques_lava.draw(ventana)
+        ataque_espada.draw(ventana)
         pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
         pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
         pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
         pygame.draw.line(ventana, BLANCO, [0,ALTO-78], [ANCHO,ALTO-78])
         pygame.display.flip()
-        reloj.tick(60)
+        reloj.tick(15)
