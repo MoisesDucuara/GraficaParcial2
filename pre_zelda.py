@@ -13,12 +13,12 @@ ROJO=[255,0,0]
 VERDE=[0,255,0]
 AZUL=[0,0,255]
 
-def recorte(img,fil,col):
+def recorte(img,fil,col,ini_f):
     m=[]
     for i in range(fil):
         fila=[]
         for j in range(col):
-            cuadro=img.subsurface(j*32,i*32,32,32)
+            cuadro=img.subsurface(j*32,(i+ini_f)*32,32,32)
             fila.append(cuadro)
         m.append(fila)
     return m
@@ -272,9 +272,13 @@ class Jugador(pygame.sprite.Sprite):
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Enemigo(pygame.sprite.Sprite):
-    def __init__(self,img,pos):
+    def __init__(self,matriz_img,pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image=img
+        self.matriz_img=matriz_img
+        self.accion=0
+        self.cont_accion=0
+        self.lim_accion=[2,2,2,2]
+        self.image=self.matriz_img[self.accion][self.cont_accion]
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
         self.rect.y=pos[1]
@@ -310,18 +314,23 @@ if __name__ == '__main__':
     fondo_img=pygame.image.load('fondo3.png')
     tileset_img=pygame.image.load('set_rpg.png')
     personaje_img=pygame.image.load('jugador.png')
+    enemigos_img=pygame.image.load('enemigos.png')
 
-    matriz_imagenes=recorte(tileset_img,63,32)
-    matriz_jugador=recorte(personaje_img,12,8)
+    #recorte de imagenes
+    matriz_imagenes=recorte(tileset_img,63,32,0)
+    matriz_jugador=recorte(personaje_img,12,8,0)
+    matriz_enemigos_1=recorte(enemigos_img,4,3,0)
+    matriz_enemigos_2=recorte(enemigos_img,4,3,4)
 
-    #creacion de grupos y matriz de imagenes
+    #creacion de grupos
     fondos=pygame.sprite.Group()
     jugadores=pygame.sprite.Group()
     bloques=pygame.sprite.Group()
     bloques_agua=pygame.sprite.Group()
     bloques_lava=pygame.sprite.Group()
     ataque_espada=pygame.sprite.Group()
-    enemigos=pygame.sprite.Group()
+    enemigos1=pygame.sprite.Group()
+    enemigos2=pygame.sprite.Group()
 
     #constructor del fondo
     f=Fondo(fondo_img,[-250,-200])
@@ -333,9 +342,15 @@ if __name__ == '__main__':
     #fin de contructor del jugador
 
     #constructor de enemigos
-    ene=Enemigo([200,200])
-    enemigos.add(ene)
+    ene=Enemigo(matriz_enemigos_1,[200,200])
+    enemigos1.add(ene)
 
+    ene2=Enemigo(matriz_enemigos_2,[50,50])
+    enemigos2.add(ene2)
+    #fin de constructor enemigo
+
+
+    #construccion del mapa parser
     parser_bloque=ConfigParser.ConfigParser()
     parser_bloque.read('parcer_mapa.par')
 
@@ -343,7 +358,6 @@ if __name__ == '__main__':
 
     parser_bloque_info_mapa=parser_bloque.get('info','mapa')
     parser_bloque_info_mapa=parser_bloque_info_mapa.split('\n')
-
 
     pos_bloq_col=0
     pos_bloq_fil=0
@@ -372,6 +386,7 @@ if __name__ == '__main__':
                 pos_bloq_col+=1
         pos_bloq_col=0
         pos_bloq_fil+=1
+    #fin de la constriccion del mapa parser
 
     fin=False
     while not fin:
@@ -442,7 +457,8 @@ if __name__ == '__main__':
         bloques.update()
         bloques_agua.update()
         bloques_lava.update()
-        enemigos.update()
+        enemigos1.update()
+        enemigos2.update()
 
         #Actualizacon de imagenes
         ventana.fill(NEGRO)
@@ -453,7 +469,8 @@ if __name__ == '__main__':
         bloques_agua.draw(ventana)
         bloques_lava.draw(ventana)
         ataque_espada.draw(ventana)
-        enemigos.draw(ventana)
+        enemigos1.draw(ventana)
+        enemigos2.draw(ventana)
         pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
         pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
         pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
