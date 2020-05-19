@@ -271,6 +271,20 @@ class Jugador(pygame.sprite.Sprite):
 
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
+class Enemigo(pygame.sprite.Sprite):
+    def __init__(self,img,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=img
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.velx=0
+        self.vely=0
+
+    def update(self):
+        self.rect.x+=self.velx
+        self.rect.y+=self.vely
+
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
         pygame.sprite.Sprite.__init__(self)
@@ -307,6 +321,7 @@ if __name__ == '__main__':
     bloques_agua=pygame.sprite.Group()
     bloques_lava=pygame.sprite.Group()
     ataque_espada=pygame.sprite.Group()
+    enemigos=pygame.sprite.Group()
 
     #constructor del fondo
     f=Fondo(fondo_img,[-250,-200])
@@ -316,6 +331,10 @@ if __name__ == '__main__':
     j=Jugador(matriz_jugador)
     jugadores.add(j)
     #fin de contructor del jugador
+
+    #constructor de enemigos
+    ene=Enemigo([200,200])
+    enemigos.add(ene)
 
     parser_bloque=ConfigParser.ConfigParser()
     parser_bloque.read('parcer_mapa.par')
@@ -423,6 +442,7 @@ if __name__ == '__main__':
         bloques.update()
         bloques_agua.update()
         bloques_lava.update()
+        enemigos.update()
 
         #Actualizacon de imagenes
         ventana.fill(NEGRO)
@@ -433,6 +453,7 @@ if __name__ == '__main__':
         bloques_agua.draw(ventana)
         bloques_lava.draw(ventana)
         ataque_espada.draw(ventana)
+        enemigos.draw(ventana)
         pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
         pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
         pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
