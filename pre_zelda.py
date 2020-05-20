@@ -62,6 +62,7 @@ class Jugador(pygame.sprite.Sprite):
 
         self.rect.y+=self.velyp+self.velyn+self.vely_mojado
 
+        #Colisiones en el eje Y
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
             if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+8):
@@ -75,6 +76,10 @@ class Jugador(pygame.sprite.Sprite):
                     be.vely=0
                 for be in bloques_lava:
                     be.vely=0
+                for b in enemigos1:
+                    b.vely=0
+                for b in enemigos2:
+                    b.vely=0
             elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-8):
                 #print "Colision 2"
                 self.velyn=0
@@ -86,9 +91,14 @@ class Jugador(pygame.sprite.Sprite):
                     be.vely=0
                 for be in bloques_lava:
                     be.vely=0
+                for b in enemigos1:
+                    b.vely=0
+                for b in enemigos2:
+                    b.vely=0
 
         self.rect.x+=self.velxp+self.velxn+self.velx_mojado
 
+        #Colisiones en el eje X
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
         for b in ls_col:
             if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+8):
@@ -102,6 +112,10 @@ class Jugador(pygame.sprite.Sprite):
                     be.velx=0
                 for be in bloques_lava:
                     be.velx=0
+                for b in enemigos1:
+                    b.velx=0
+                for b in enemigos2:
+                    b.velx=0
             elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-8):
                 #print "Colision 4"
                 self.velxn=0
@@ -113,11 +127,16 @@ class Jugador(pygame.sprite.Sprite):
                     be.velx=0
                 for be in bloques_lava:
                     be.velx=0
+                for b in enemigos1:
+                    b.velx=0
+                for b in enemigos2:
+                    b.velx=0
 
+        #Comportamiento con la lava
         ls_lava=pygame.sprite.spritecollide(self,bloques_lava,False)
         if ls_lava != []:
             self.vida-=1
-
+        #Comportamiento con el agua
         ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
         if ls_agua != []:
             self.vely_mojado=3
@@ -131,7 +150,7 @@ class Jugador(pygame.sprite.Sprite):
             self.vely_mojado=0
             self.velx_mojado=0
 
-
+        #Empuje de la caja del moviemiento del mapa
         if self.rect.y > (ALTO-110):
             #print "Caja 1"
             self.rect.y = ALTO-110
@@ -148,6 +167,12 @@ class Jugador(pygame.sprite.Sprite):
             for bf in bloques_lava:
                 bf.vely=-5
                 bf.velx=0
+            for b in enemigos1:
+                b.vely=-5
+                b.velx=0
+            for b in enemigos2:
+                b.vely=-5
+                b.velx=0
         elif self.rect.y < 70:
             #print "Caja 2"
             self.rect.y = 70
@@ -165,6 +190,12 @@ class Jugador(pygame.sprite.Sprite):
                 for bf in bloques_lava:
                     bf.vely=2
                     bf.velx=0
+                for b in enemigos1:
+                    b.vely=2
+                    b.velx=0
+                for b in enemigos2:
+                    b.vely=2
+                    b.velx=0
             else:
                 f.vely=5
                 f.velx=0
@@ -177,6 +208,12 @@ class Jugador(pygame.sprite.Sprite):
                 for bf in bloques_lava:
                     bf.vely=5
                     bf.velx=0
+                for b in enemigos1:
+                    b.vely=5
+                    b.velx=0
+                for b in enemigos2:
+                    b.vely=5
+                    b.velx=0
 
         if self.rect.x > (ANCHO-200):
             #print "Caja 3"
@@ -195,6 +232,12 @@ class Jugador(pygame.sprite.Sprite):
                 for bf in bloques_lava:
                     bf.velx=-2
                     bf.vely=0
+                for b in enemigos1:
+                    b.velx=-2
+                    b.vely=0
+                for b in enemigos2:
+                    b.velx=-2
+                    b.vely=0
             else:
                 f.velx=-5
                 f.vely=0
@@ -207,6 +250,12 @@ class Jugador(pygame.sprite.Sprite):
                 for bf in bloques_lava:
                     bf.velx=-5
                     bf.vely=0
+                for b in enemigos1:
+                    b.velx=-5
+                    b.vely=0
+                for b in enemigos2:
+                    b.velx=-5
+                    b.vely=0
         elif self.rect.x < 150:
             #print "Caja 4"
             self.rect.x = 150
@@ -223,9 +272,14 @@ class Jugador(pygame.sprite.Sprite):
             for bf in bloques_lava:
                 bf.velx=5
                 bf.vely=0
+            for b in enemigos1:
+                b.velx=5
+                b.vely=0
+            for b in enemigos2:
+                b.velx=5
+                b.vely=0
 
         #Manejo de sprites jugador
-
         if self.espada>=1 and self.espada<4:
             if self.accion==0 or self.accion==4:
                 self.accion=8
@@ -272,9 +326,10 @@ class Jugador(pygame.sprite.Sprite):
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Enemigo(pygame.sprite.Sprite):
-    def __init__(self,matriz_img,pos):
+    def __init__(self,matriz_img,pos,tipo):
         pygame.sprite.Sprite.__init__(self)
         self.matriz_img=matriz_img
+        self.tipo=tipo
         self.accion=0
         self.cont_accion=0
         self.lim_accion=[2,2,2,2]
@@ -284,10 +339,139 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect.y=pos[1]
         self.velx=0
         self.vely=0
+        self.velx_pro=0
+        self.vely_pro=0
+        self.cont_mov=0
 
     def update(self):
-        self.rect.x+=self.velx
-        self.rect.y+=self.vely
+        self.rect.x+=self.velx+self.velx_pro
+
+        #Colisiones en el eje X
+        ls_col=pygame.sprite.spritecollide(self,bloques,False)
+        for b in ls_col:
+            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+8):
+                #print "Colision 3"
+                self.velxp=0
+                self.rect.right = b.rect.left
+                f.velx=0
+                for be in bloques:
+                    be.velx=0
+                for be in bloques_agua:
+                    be.velx=0
+                for be in bloques_lava:
+                    be.velx=0
+                for b in enemigos1:
+                    b.velx=0
+                for b in enemigos2:
+                    b.velx=0
+            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-8):
+                #print "Colision 4"
+                self.velxn=0
+                self.rect.left = b.rect.right
+                f.velx=0
+                for be in bloques:
+                    be.velx=0
+                for be in bloques_agua:
+                    be.velx=0
+                for be in bloques_lava:
+                    be.velx=0
+                for b in enemigos1:
+                    b.velx=0
+                for b in enemigos2:
+                    b.velx=0
+
+        self.rect.y+=self.vely+self.vely_pro
+
+        #Colisiones en el eje Y
+        ls_col=pygame.sprite.spritecollide(self,bloques,False)
+        for b in ls_col:
+            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+8):
+                #print "Colision 1"
+                self.velyp=0
+                self.rect.bottom = b.rect.top
+                f.vely=0
+                for be in bloques:
+                    be.vely=0
+                for be in bloques_agua:
+                    be.vely=0
+                for be in bloques_lava:
+                    be.vely=0
+                for b in enemigos1:
+                    b.vely=0
+                for b in enemigos2:
+                    b.vely=0
+            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-8):
+                #print "Colision 2"
+                self.velyn=0
+                self.rect.top = b.rect.bottom
+                f.vely=0
+                for be in bloques:
+                    be.vely=0
+                for be in bloques_agua:
+                    be.vely=0
+                for be in bloques_lava:
+                    be.vely=0
+                for b in enemigos1:
+                    b.vely=0
+                for b in enemigos2:
+                    b.vely=0
+
+
+        if self.tipo==1:
+            if self.cont_mov==0:
+                self.velx_pro=-5
+                self.vely_pro=0
+            elif self.cont_mov==3:
+                self.velx_pro=0
+                self.vely_pro=5
+            elif self.cont_mov==6:
+                self.velx_pro=5
+                self.vely_pro=0
+            elif self.cont_mov==9:
+                self.velx_pro=0
+                self.vely_pro=-5
+            elif self.cont_mov==11:
+                self.cont_mov=-1
+            self.cont_mov+=1
+        if self.tipo==2:
+            if j.rect.right > self.rect.left-20 and j.rect.left < self.rect.right+20:
+                if j.rect.top < self.rect.bottom+20 and j.rect.bottom > self.rect.top-20:
+                    if j.rect.x < self.rect.x:
+                        self.velx_pro=-2
+                        self.vely_pro=0
+                    elif j.rect.x > self.rect.x:
+                        self.velx_pro=2
+                        self.vely_pro=0
+                    if j.rect.y < self.rect.y:
+                        self.vely_pro=-2
+                        self.velx_pro=0
+                    elif j.rect.y > self.rect.y:
+                        self.vely_pro=2
+                        self.velx_pro=0
+            else:
+                self.velx_pro=0
+                self.vely_pro=0
+
+
+        #Manejo de sprites enemigo
+
+        if self.vely_pro > 0:
+            self.accion=0
+        elif self.vely_pro < 0:
+            self.accion=3
+        elif self.velx_pro > 0:
+            self.accion=2
+        elif self.velx_pro < 0:
+            self.accion=1
+        elif self.vely_pro == 0 and self.velx_pro == 0:
+            self.cont_accion=0
+
+        if self.cont_accion<self.lim_accion[self.accion]:
+            self.cont_accion+=1
+        else:
+            self.cont_accion=0
+
+        self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
@@ -342,10 +526,10 @@ if __name__ == '__main__':
     #fin de contructor del jugador
 
     #constructor de enemigos
-    ene=Enemigo(matriz_enemigos_1,[200,200])
+    ene=Enemigo(matriz_enemigos_1,[200,200],1)
     enemigos1.add(ene)
 
-    ene2=Enemigo(matriz_enemigos_2,[50,50])
+    ene2=Enemigo(matriz_enemigos_2,[200,130],2)
     enemigos2.add(ene2)
     #fin de constructor enemigo
 
@@ -388,6 +572,7 @@ if __name__ == '__main__':
         pos_bloq_fil+=1
     #fin de la constriccion del mapa parser
 
+
     fin=False
     while not fin:
         for event in pygame.event.get():
@@ -422,6 +607,10 @@ if __name__ == '__main__':
                         b.velx=0
                     for b in bloques_lava:
                         b.velx=0
+                    for b in enemigos1:
+                        b.velx=0
+                    for b in enemigos2:
+                        b.velx=0
                 elif event.key == pygame.K_LEFT:
                     j.velxn=0
                     f.velx=0
@@ -430,6 +619,10 @@ if __name__ == '__main__':
                     for b in bloques_agua:
                         b.velx=0
                     for b in bloques_lava:
+                        b.velx=0
+                    for b in enemigos1:
+                        b.velx=0
+                    for b in enemigos2:
                         b.velx=0
                 elif event.key == pygame.K_UP:
                     j.velyn=0
@@ -440,6 +633,10 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in bloques_lava:
                         b.vely=0
+                    for b in enemigos1:
+                        b.vely=0
+                    for b in enemigos2:
+                        b.vely=0
                 elif event.key == pygame.K_DOWN:
                     j.velyp=0
                     f.vely=0
@@ -448,6 +645,10 @@ if __name__ == '__main__':
                     for b in bloques_agua:
                         b.vely=0
                     for b in bloques_lava:
+                        b.vely=0
+                    for b in enemigos1:
+                        b.vely=0
+                    for b in enemigos2:
                         b.vely=0
 
 
@@ -464,13 +665,13 @@ if __name__ == '__main__':
         ventana.fill(NEGRO)
         #ventana.blit(fondo_img,[0,0])
         fondos.draw(ventana)
-        jugadores.draw(ventana)
         bloques.draw(ventana)
         bloques_agua.draw(ventana)
         bloques_lava.draw(ventana)
         ataque_espada.draw(ventana)
         enemigos1.draw(ventana)
         enemigos2.draw(ventana)
+        jugadores.draw(ventana)
         pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
         pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
         pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
