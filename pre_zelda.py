@@ -436,16 +436,16 @@ class Enemigo(pygame.sprite.Sprite):
         if self.tipo==2:
             if j.rect.right > self.rect.left-20 and j.rect.left < self.rect.right+20:
                 if j.rect.top < self.rect.bottom+20 and j.rect.bottom > self.rect.top-20:
-                    if j.rect.x < self.rect.x:
+                    if j.rect.left+16 < self.rect.left:
                         self.velx_pro=-2
                         self.vely_pro=0
-                    elif j.rect.x > self.rect.x:
+                    if j.rect.left+16 > self.rect.right:
                         self.velx_pro=2
                         self.vely_pro=0
-                    if j.rect.y < self.rect.y:
+                    if j.rect.top+16 < self.rect.top:
                         self.vely_pro=-2
                         self.velx_pro=0
-                    elif j.rect.y > self.rect.y:
+                    if j.rect.top+16 > self.rect.bottom:
                         self.vely_pro=2
                         self.velx_pro=0
             else:
