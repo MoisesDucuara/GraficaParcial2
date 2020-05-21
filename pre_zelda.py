@@ -290,14 +290,55 @@ class Jugador(pygame.sprite.Sprite):
                     ataque_espada.add(esp)
             elif self.accion==1 or self.accion==5:
                 self.accion=9
+                if self.espada==1:
+                    esp=Bloque(personaje_img,[self.rect.left-16,self.rect.top])
+                    esp.image=pygame.Surface([16,32])
+                    esp.image.fill(AZUL)
+                    ataque_espada.add(esp)
+            elif self.accion==2 or self.accion==6:
+                self.accion=10
+                if self.espada==1:
+                    esp=Bloque(personaje_img,[self.rect.left,self.rect.bottom])
+                    esp.image=pygame.Surface([32,16])
+                    esp.image.fill(AZUL)
+                    ataque_espada.add(esp)
+            elif self.accion==3 or self.accion==7:
+                self.accion=11
+                if self.espada==1:
+                    esp=Bloque(personaje_img,[self.rect.left,self.rect.top-16])
+                    esp.image=pygame.Surface([32,16])
+                    esp.image.fill(AZUL)
+                    ataque_espada.add(esp)
             self.espada+=1
+            for e in ataque_espada:
+                if self.accion==8:
+                    e.rect.left=self.rect.right
+                    e.rect.top=self.rect.top
+                elif self.accion==9:
+                    e.rect.left=self.rect.left-16
+                    e.rect.top=self.rect.top
+                elif self.accion==10:
+                    e.rect.left=self.rect.left
+                    e.rect.top=self.rect.bottom
+                elif self.accion==11:
+                    e.rect.left=self.rect.left
+                    e.rect.top=self.rect.top-16
+
+
         elif self.espada==4:
             self.espada=0
             if self.accion==8:
                 self.accion=0
                 ataque_espada.remove(ataque_espada)
-            if self.accion==9:
+            elif self.accion==9:
                 self.accion=1
+                ataque_espada.remove(ataque_espada)
+            elif self.accion==10:
+                self.accion=2
+                ataque_espada.remove(ataque_espada)
+            elif self.accion==11:
+                self.accion=3
+                ataque_espada.remove(ataque_espada)
         else:
             if self.velyn+self.velyp > 0:
                 self.accion=6
