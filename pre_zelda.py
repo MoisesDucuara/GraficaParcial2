@@ -132,6 +132,14 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos2:
                     b.velx=0
 
+
+        #Colision enemigos
+        ls_enemigo=pygame.sprite.spritecollide(self,enemigos1,False)
+        if  ls_enemigo != []:
+            self.vida+=5
+        ls_enemigo=pygame.sprite.spritecollide(self,enemigos2,False)
+        if  ls_enemigo != []:
+            self.vida-=5
         #Comportamiento con la lava
         ls_lava=pygame.sprite.spritecollide(self,bloques_lava,False)
         if ls_lava != []:
@@ -281,33 +289,25 @@ class Jugador(pygame.sprite.Sprite):
 
         #Manejo de sprites jugador
         if self.espada>=1 and self.espada<4:
-            if self.accion==0 or self.accion==4:
+            if self.accion==0 or self.accion==4 or self.accion==8:
                 self.accion=8
                 if self.espada==1:
-                    esp=Bloque(personaje_img,[self.rect.right,self.rect.top])
-                    esp.image=pygame.Surface([16,32])
-                    esp.image.fill(AZUL)
+                    esp=Ataque([self.rect.right,self.rect.top],16,32)
                     ataque_espada.add(esp)
-            elif self.accion==1 or self.accion==5:
+            elif self.accion==1 or self.accion==5 or self.accion==9:
                 self.accion=9
                 if self.espada==1:
-                    esp=Bloque(personaje_img,[self.rect.left-16,self.rect.top])
-                    esp.image=pygame.Surface([16,32])
-                    esp.image.fill(AZUL)
+                    esp=Ataque([self.rect.left-16,self.rect.top],16,32)
                     ataque_espada.add(esp)
-            elif self.accion==2 or self.accion==6:
+            elif self.accion==2 or self.accion==6 or self.accion==10:
                 self.accion=10
                 if self.espada==1:
-                    esp=Bloque(personaje_img,[self.rect.left,self.rect.bottom])
-                    esp.image=pygame.Surface([32,16])
-                    esp.image.fill(AZUL)
+                    esp=Ataque([self.rect.left,self.rect.bottom],32,16)
                     ataque_espada.add(esp)
-            elif self.accion==3 or self.accion==7:
+            elif self.accion==3 or self.accion==7 or self.accion==11:
                 self.accion=11
                 if self.espada==1:
-                    esp=Bloque(personaje_img,[self.rect.left,self.rect.top-16])
-                    esp.image=pygame.Surface([32,16])
-                    esp.image.fill(AZUL)
+                    esp=Ataque([self.rect.left,self.rect.top-16],32,16)
                     ataque_espada.add(esp)
             self.espada+=1
             for e in ataque_espada:
@@ -323,8 +323,6 @@ class Jugador(pygame.sprite.Sprite):
                 elif self.accion==11:
                     e.rect.left=self.rect.left
                     e.rect.top=self.rect.top-16
-
-
         elif self.espada==4:
             self.espada=0
             if self.accion==8:
@@ -383,6 +381,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.velx_pro=0
         self.vely_pro=0
         self.cont_mov=0
+        self.vida=100
 
     def update(self):
         self.rect.x+=self.velx+self.velx_pro
@@ -459,6 +458,7 @@ class Enemigo(pygame.sprite.Sprite):
 
 
         if self.tipo==1:
+            print "ene1: "+str(self.vida)
             if self.cont_mov==0:
                 self.velx_pro=-5
                 self.vely_pro=0
@@ -475,6 +475,7 @@ class Enemigo(pygame.sprite.Sprite):
                 self.cont_mov=-1
             self.cont_mov+=1
         if self.tipo==2:
+            print "ene2: "+str(self.vida)
             if j.rect.right > self.rect.left-20 and j.rect.left < self.rect.right+20:
                 if j.rect.top < self.rect.bottom+20 and j.rect.bottom > self.rect.top-20:
                     if j.rect.left+16 < self.rect.left:
@@ -494,8 +495,13 @@ class Enemigo(pygame.sprite.Sprite):
                 self.vely_pro=0
 
 
-        #Manejo de sprites enemigo
+        #Manejo de danho
+        ls_ataque=pygame.sprite.spritecollide(self,ataque_espada,True)
+        if  ls_ataque != []:
+            #print "colision"
+            self.vida-=2
 
+        #Manejo de sprites enemigo
         if self.vely_pro > 0:
             self.accion=0
         elif self.vely_pro < 0:
@@ -518,6 +524,21 @@ class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
         pygame.sprite.Sprite.__init__(self)
         self.image=img
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.velx=0
+        self.vely=0
+
+    def update(self):
+        self.rect.x+=self.velx
+        self.rect.y+=self.vely
+
+class Ataque(pygame.sprite.Sprite):
+    def __init__(self,pos,d_an,d_al):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=pygame.Surface([d_an,d_al])
+        self.image.fill(AZUL)
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
         self.rect.y=pos[1]
