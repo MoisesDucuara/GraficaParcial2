@@ -43,7 +43,7 @@ class Jugador(pygame.sprite.Sprite):
         self.matriz_img=matriz_img
         self.accion=0
         self.cont_accion=0
-        self.lim_accion=[0,0,0,0,5,5,6,7,2,2,2,2]
+        self.lim_accion=[0,0,0,0,5,5,6,7,2,2,2,2,2,2,2,2]
         self.image=self.matriz_img[self.accion][self.cont_accion]
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
@@ -56,6 +56,7 @@ class Jugador(pygame.sprite.Sprite):
         self.velx_mojado=0
         self.vida=100
         self.espada=0
+        self.arco=0
         #self.bloques=None
 
     def update(self):
@@ -80,6 +81,8 @@ class Jugador(pygame.sprite.Sprite):
                     b.vely=0
                 for b in enemigos2:
                     b.vely=0
+                for b in ataque_flecha:
+                    b.vely=0
             elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-8):
                 #print "Colision 2"
                 self.velyn=0
@@ -94,6 +97,8 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos1:
                     b.vely=0
                 for b in enemigos2:
+                    b.vely=0
+                for b in ataque_flecha:
                     b.vely=0
 
         self.rect.x+=self.velxp+self.velxn+self.velx_mojado
@@ -116,6 +121,8 @@ class Jugador(pygame.sprite.Sprite):
                     b.velx=0
                 for b in enemigos2:
                     b.velx=0
+                for b in ataque_flecha:
+                    b.velx=0
             elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-8):
                 #print "Colision 4"
                 self.velxn=0
@@ -130,6 +137,8 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos1:
                     b.velx=0
                 for b in enemigos2:
+                    b.velx=0
+                for b in ataque_flecha:
                     b.velx=0
 
 
@@ -181,6 +190,9 @@ class Jugador(pygame.sprite.Sprite):
             for b in enemigos2:
                 b.vely=-5
                 b.velx=0
+            for b in ataque_flecha:
+                b.vely=-5
+                b.velx=0
         elif self.rect.y < 70:
             #print "Caja 2"
             self.rect.y = 70
@@ -204,6 +216,9 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos2:
                     b.vely=2
                     b.velx=0
+                for b in ataque_flecha:
+                    b.vely=2
+                    b.velx=0
             else:
                 f.vely=5
                 f.velx=0
@@ -220,6 +235,9 @@ class Jugador(pygame.sprite.Sprite):
                     b.vely=5
                     b.velx=0
                 for b in enemigos2:
+                    b.vely=5
+                    b.velx=0
+                for b in ataque_flecha:
                     b.vely=5
                     b.velx=0
 
@@ -246,6 +264,9 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos2:
                     b.velx=-2
                     b.vely=0
+                for b in ataque_flecha:
+                    b.velx=-2
+                    b.vely=0
             else:
                 f.velx=-5
                 f.vely=0
@@ -262,6 +283,9 @@ class Jugador(pygame.sprite.Sprite):
                     b.velx=-5
                     b.vely=0
                 for b in enemigos2:
+                    b.velx=-5
+                    b.vely=0
+                for b in ataque_flecha:
                     b.velx=-5
                     b.vely=0
         elif self.rect.x < 150:
@@ -286,9 +310,52 @@ class Jugador(pygame.sprite.Sprite):
             for b in enemigos2:
                 b.velx=5
                 b.vely=0
+            for b in ataque_flecha:
+                b.velx=5
+                b.vely=0
 
         #Manejo de sprites jugador
-        if self.espada>=1 and self.espada<4:
+        if self.arco>=1 and self.arco<4:
+            if self.accion==0 or self.accion==4:
+                self.accion=12
+                if self.arco==1:
+                    fle=Flecha(flecha_derecha,[self.rect.right-10,self.rect.top+16])
+                    fle.velx_pro=7
+                    ataque_flecha.add(fle)
+            elif self.accion==1 or self.accion==5:
+                self.accion=13
+                if self.arco==1:
+                    fle=Flecha(flecha_izquierda,[self.rect.left-5,self.rect.top+16])
+                    fle.velx_pro=-7
+                    ataque_flecha.add(fle)
+            elif self.accion==2 or self.accion==6:
+                self.accion=14
+                if self.arco==1:
+                    fle=Flecha(flecha_abajo,[self.rect.left+14,self.rect.bottom-7])
+                    fle.vely_pro=7
+                    ataque_flecha.add(fle)
+            elif self.accion==3 or self.accion==7:
+                self.accion=15
+                if self.arco==1:
+                    fle=Flecha(flecha_arriba,[self.rect.left+14,self.rect.top-6])
+                    fle.vely_pro-=7
+                    ataque_flecha.add(fle)
+            self.arco+=1
+        elif self.arco==4:
+            self.arco=0
+            if self.accion==12:
+                self.accion=0
+                ataque_espada.remove(ataque_espada)
+            elif self.accion==13:
+                self.accion=1
+                ataque_espada.remove(ataque_espada)
+            elif self.accion==14:
+                self.accion=2
+                ataque_espada.remove(ataque_espada)
+            elif self.accion==15:
+                self.accion=3
+                ataque_espada.remove(ataque_espada)
+        elif self.espada>=1 and self.espada<4:
             if self.accion==0 or self.accion==4 or self.accion==8:
                 self.accion=8
                 if self.espada==1:
@@ -498,8 +565,10 @@ class Enemigo(pygame.sprite.Sprite):
         #Manejo de danho
         ls_ataque=pygame.sprite.spritecollide(self,ataque_espada,True)
         if  ls_ataque != []:
-            #print "colision"
             self.vida-=2
+        ls_fle=pygame.sprite.spritecollide(self,ataque_flecha,True)
+        if  ls_fle != []:
+            self.vida-=0.5
 
         #Manejo de sprites enemigo
         if self.vely_pro > 0:
@@ -534,6 +603,8 @@ class Bloque(pygame.sprite.Sprite):
         self.rect.x+=self.velx
         self.rect.y+=self.vely
 
+        pygame.sprite.spritecollide(self,ataque_flecha,True)
+
 class Ataque(pygame.sprite.Sprite):
     def __init__(self,pos,d_an,d_al):
         pygame.sprite.Sprite.__init__(self)
@@ -545,9 +616,21 @@ class Ataque(pygame.sprite.Sprite):
         self.velx=0
         self.vely=0
 
+class Flecha(pygame.sprite.Sprite):
+    def __init__(self,img,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=img
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.velx=0
+        self.vely=0
+        self.velx_pro=0
+        self.vely_pro=0
+
     def update(self):
-        self.rect.x+=self.velx
-        self.rect.y+=self.vely
+        self.rect.x+=self.velx+self.velx_pro
+        self.rect.y+=self.vely+self.vely_pro
 
 
 if __name__ == '__main__':
@@ -561,10 +644,14 @@ if __name__ == '__main__':
     tileset_img=pygame.image.load('set_rpg.png')
     personaje_img=pygame.image.load('jugador.png')
     enemigos_img=pygame.image.load('enemigos.png')
+    flecha_derecha=pygame.image.load('flecha_derecha.png')
+    flecha_izquierda=pygame.image.load('flecha_izquierda.png')
+    flecha_arriba=pygame.image.load('flecha_arriba.png')
+    flecha_abajo=pygame.image.load('flecha_abajo.png')
 
     #recorte de imagenes
     matriz_imagenes=recorte(tileset_img,63,32,0)
-    matriz_jugador=recorte(personaje_img,12,8,0)
+    matriz_jugador=recorte(personaje_img,16,8,0)
     matriz_enemigos_1=recorte(enemigos_img,4,3,0)
     matriz_enemigos_2=recorte(enemigos_img,4,3,4)
 
@@ -575,6 +662,7 @@ if __name__ == '__main__':
     bloques_agua=pygame.sprite.Group()
     bloques_lava=pygame.sprite.Group()
     ataque_espada=pygame.sprite.Group()
+    ataque_flecha=pygame.sprite.Group()
     enemigos1=pygame.sprite.Group()
     enemigos2=pygame.sprite.Group()
 
@@ -659,6 +747,8 @@ if __name__ == '__main__':
                     j.velxn=0
                 elif event.key == pygame.K_c:
                     j.espada=1
+                elif event.key == pygame.K_x:
+                    j.arco=1
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
                     j.velxp=0
@@ -673,6 +763,8 @@ if __name__ == '__main__':
                         b.velx=0
                     for b in enemigos2:
                         b.velx=0
+                    for b in ataque_flecha:
+                        b.velx=0
                 elif event.key == pygame.K_LEFT:
                     j.velxn=0
                     f.velx=0
@@ -685,6 +777,8 @@ if __name__ == '__main__':
                     for b in enemigos1:
                         b.velx=0
                     for b in enemigos2:
+                        b.velx=0
+                    for b in ataque_flecha:
                         b.velx=0
                 elif event.key == pygame.K_UP:
                     j.velyn=0
@@ -699,6 +793,8 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in enemigos2:
                         b.vely=0
+                    for b in ataque_flecha:
+                        b.vely=0
                 elif event.key == pygame.K_DOWN:
                     j.velyp=0
                     f.vely=0
@@ -712,6 +808,8 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in enemigos2:
                         b.vely=0
+                    for b in ataque_flecha:
+                        b.vely=0
 
 
         #Actualizacion de objetos
@@ -720,6 +818,7 @@ if __name__ == '__main__':
         bloques.update()
         bloques_agua.update()
         bloques_lava.update()
+        ataque_flecha.update()
         enemigos1.update()
         enemigos2.update()
 
@@ -731,6 +830,7 @@ if __name__ == '__main__':
         bloques_agua.draw(ventana)
         bloques_lava.draw(ventana)
         ataque_espada.draw(ventana)
+        ataque_flecha.draw(ventana)
         enemigos1.draw(ventana)
         enemigos2.draw(ventana)
         jugadores.draw(ventana)
