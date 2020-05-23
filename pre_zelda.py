@@ -589,6 +589,20 @@ class Enemigo(pygame.sprite.Sprite):
 
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
+class Generador(pygame.sprite.Sprite):
+    def __init__(self,img,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=img
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.velx=0
+        self.vely=0
+
+    def update(self):
+        self.rect.x+=self.velx
+        self.rect.y+=self.vely
+
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
         pygame.sprite.Sprite.__init__(self)
@@ -676,11 +690,13 @@ if __name__ == '__main__':
     #fin de contructor del jugador
 
     #constructor de enemigos
+    '''
     ene=Enemigo(matriz_enemigos_1,[200,200],1)
     enemigos1.add(ene)
 
     ene2=Enemigo(matriz_enemigos_2,[200,130],2)
     enemigos2.add(ene2)
+    '''
     #fin de constructor enemigo
 
 
