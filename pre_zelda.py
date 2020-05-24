@@ -83,6 +83,8 @@ class Jugador(pygame.sprite.Sprite):
                     b.vely=0
                 for b in ataque_flecha:
                     b.vely=0
+                for b in generadores:
+                    b.vely=0
             elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-8):
                 #print "Colision 2"
                 self.velyn=0
@@ -99,6 +101,8 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos2:
                     b.vely=0
                 for b in ataque_flecha:
+                    b.vely=0
+                for b in generadores:
                     b.vely=0
 
         self.rect.x+=self.velxp+self.velxn+self.velx_mojado
@@ -123,6 +127,8 @@ class Jugador(pygame.sprite.Sprite):
                     b.velx=0
                 for b in ataque_flecha:
                     b.velx=0
+                for b in generadores:
+                    b.velx=0
             elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-8):
                 #print "Colision 4"
                 self.velxn=0
@@ -139,6 +145,8 @@ class Jugador(pygame.sprite.Sprite):
                 for b in enemigos2:
                     b.velx=0
                 for b in ataque_flecha:
+                    b.velx=0
+                for b in generadores:
                     b.velx=0
 
 
@@ -193,6 +201,9 @@ class Jugador(pygame.sprite.Sprite):
             for b in ataque_flecha:
                 b.vely=-5
                 b.velx=0
+            for b in generadores:
+                b.vely=-5
+                b.velx=0
         elif self.rect.y < 70:
             #print "Caja 2"
             self.rect.y = 70
@@ -219,6 +230,9 @@ class Jugador(pygame.sprite.Sprite):
                 for b in ataque_flecha:
                     b.vely=2
                     b.velx=0
+                for b in generadores:
+                    b.vely=2
+                    b.velx=0
             else:
                 f.vely=5
                 f.velx=0
@@ -240,6 +254,10 @@ class Jugador(pygame.sprite.Sprite):
                 for b in ataque_flecha:
                     b.vely=5
                     b.velx=0
+                for b in generadores:
+                    b.vely=5
+                    b.velx=0
+
 
         if self.rect.x > (ANCHO-200):
             #print "Caja 3"
@@ -267,6 +285,9 @@ class Jugador(pygame.sprite.Sprite):
                 for b in ataque_flecha:
                     b.velx=-2
                     b.vely=0
+                for b in generadores:
+                    b.velx=-2
+                    b.vely=0
             else:
                 f.velx=-5
                 f.vely=0
@@ -286,6 +307,9 @@ class Jugador(pygame.sprite.Sprite):
                     b.velx=-5
                     b.vely=0
                 for b in ataque_flecha:
+                    b.velx=-5
+                    b.vely=0
+                for b in generadores:
                     b.velx=-5
                     b.vely=0
         elif self.rect.x < 150:
@@ -311,6 +335,9 @@ class Jugador(pygame.sprite.Sprite):
                 b.velx=5
                 b.vely=0
             for b in ataque_flecha:
+                b.velx=5
+                b.vely=0
+            for b in generadores:
                 b.velx=5
                 b.vely=0
 
@@ -590,9 +617,10 @@ class Enemigo(pygame.sprite.Sprite):
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Generador(pygame.sprite.Sprite):
-    def __init__(self,img,pos):
+    def __init__(self,img,pos,tipo):
         pygame.sprite.Sprite.__init__(self)
         self.image=img
+        self.tipo=tipo
         self.rect=self.image.get_rect()
         self.rect.x=pos[0]
         self.rect.y=pos[1]
@@ -602,6 +630,8 @@ class Generador(pygame.sprite.Sprite):
     def update(self):
         self.rect.x+=self.velx
         self.rect.y+=self.vely
+
+        
 
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
@@ -679,6 +709,7 @@ if __name__ == '__main__':
     ataque_flecha=pygame.sprite.Group()
     enemigos1=pygame.sprite.Group()
     enemigos2=pygame.sprite.Group()
+    generadores=pygame.sprite.Group()
 
     #constructor del fondo
     f=Fondo(fondo_img,[-250,-200])
@@ -698,6 +729,38 @@ if __name__ == '__main__':
     enemigos2.add(ene2)
     '''
     #fin de constructor enemigo
+
+    #constructor de generadores mapa parser
+
+    parser_gene=ConfigParser.ConfigParser()
+    parser_gene.read('parcer_generador.par')
+
+    parser_gene_info_img=parser_gene.get('info','img')
+
+    parser_gene_info_mapa=parser_gene.get('info','mapa')
+    parser_gene_info_mapa=parser_gene_info_mapa.split('\n')
+
+    pos_bloq_col=0
+    pos_bloq_fil=0
+
+    for i in parser_gene_info_mapa:
+        for e in i:
+            if parser_gene.get(e,'tipo') == 'vacio':
+                pos_bloq_col+=1
+            elif parser_gene.get(e,'tipo') == 'generador':
+                fl=int(parser_gene.get(e,'fil'))
+                cl=int(parser_gene.get(e,"col"))
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],1)
+                generadores.add(gene)
+                pos_bloq_col+=1
+            elif parser_gene.get(e,'tipo') == 'generados':
+                fl=int(parser_gene.get(e,'fil'))
+                cl=int(parser_gene.get(e,"col"))
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],2)
+                generadores.add(gene)
+                pos_bloq_col+=1
+        pos_bloq_col=0
+        pos_bloq_fil+=1
 
 
     #construccion del mapa parser
@@ -781,6 +844,8 @@ if __name__ == '__main__':
                         b.velx=0
                     for b in ataque_flecha:
                         b.velx=0
+                    for b in generadores:
+                        b.velx=0
                 elif event.key == pygame.K_LEFT:
                     j.velxn=0
                     f.velx=0
@@ -795,6 +860,8 @@ if __name__ == '__main__':
                     for b in enemigos2:
                         b.velx=0
                     for b in ataque_flecha:
+                        b.velx=0
+                    for b in generadores:
                         b.velx=0
                 elif event.key == pygame.K_UP:
                     j.velyn=0
@@ -811,6 +878,8 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in ataque_flecha:
                         b.vely=0
+                    for b in generadores:
+                        b.vely=0
                 elif event.key == pygame.K_DOWN:
                     j.velyp=0
                     f.vely=0
@@ -826,6 +895,8 @@ if __name__ == '__main__':
                         b.vely=0
                     for b in ataque_flecha:
                         b.vely=0
+                    for b in generadores:
+                        b.vely=0
 
 
         #Actualizacion de objetos
@@ -835,6 +906,7 @@ if __name__ == '__main__':
         bloques_agua.update()
         bloques_lava.update()
         ataque_flecha.update()
+        generadores.update()
         enemigos1.update()
         enemigos2.update()
 
@@ -847,6 +919,7 @@ if __name__ == '__main__':
         bloques_lava.draw(ventana)
         ataque_espada.draw(ventana)
         ataque_flecha.draw(ventana)
+        generadores.draw(ventana)
         enemigos1.draw(ventana)
         enemigos2.draw(ventana)
         jugadores.draw(ventana)
