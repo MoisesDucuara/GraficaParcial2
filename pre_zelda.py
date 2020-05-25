@@ -617,7 +617,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Generador(pygame.sprite.Sprite):
-    def __init__(self,img,pos,tipo):
+    def __init__(self,img,pos,tipo,parser_ene1,parser_ene1_info_mapa,img_ene):
         pygame.sprite.Sprite.__init__(self)
         self.image=img
         self.tipo=tipo
@@ -626,12 +626,30 @@ class Generador(pygame.sprite.Sprite):
         self.rect.y=pos[1]
         self.velx=0
         self.vely=0
+        self.parser_ene1=parser_ene1
+        self.parser_ene1_info_mapa=parser_ene1_info_mapa
+        self.img_ene=img_ene
 
     def update(self):
         self.rect.x+=self.velx
         self.rect.y+=self.vely
 
-        
+        if self.tipo==1:
+            pos_bloq_col=0
+            pos_bloq_fil=0
+
+            for i in self.parser_ene1_info_mapa:
+                for e in i:
+                    if self.parser_ene1.get(e,'tipo') == 'vacio':
+                        pos_bloq_col+=1
+                    elif self.parser_ene1.get(e,'tipo') == 'ene1':
+                        ene1=Enemigo(self.img_ene,[pos_bloq_col*32-250,pos_bloq_fil*32-200],1)
+                        enemigos1.add(ene1)
+                        pos_bloq_col+=1
+                pos_bloq_col=0
+                pos_bloq_fil+=1
+        elif self.tipo==2:
+            pass
 
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
@@ -728,6 +746,14 @@ if __name__ == '__main__':
     ene2=Enemigo(matriz_enemigos_2,[200,130],2)
     enemigos2.add(ene2)
     '''
+
+    parser_ene1=ConfigParser.ConfigParser()
+    parser_ene1.read('parcer_generador.par')
+
+    parser_ene1_info_img=parser_ene1.get('info','img')
+
+    parser_ene1_info_mapa=parser_ene1.get('info','mapa')
+    parser_ene1_info_mapa=parser_ene1_info_mapa.split('\n')
     #fin de constructor enemigo
 
     #constructor de generadores mapa parser
@@ -750,13 +776,13 @@ if __name__ == '__main__':
             elif parser_gene.get(e,'tipo') == 'generador':
                 fl=int(parser_gene.get(e,'fil'))
                 cl=int(parser_gene.get(e,"col"))
-                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],1)
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],1,parser_ene1,parser_ene1_info_mapa,matriz_enemigos_1)
                 generadores.add(gene)
                 pos_bloq_col+=1
             elif parser_gene.get(e,'tipo') == 'generados':
                 fl=int(parser_gene.get(e,'fil'))
                 cl=int(parser_gene.get(e,"col"))
-                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],2)
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],2,parser_ene1,parser_ene1_info_mapa,matriz_enemigos_2)
                 generadores.add(gene)
                 pos_bloq_col+=1
         pos_bloq_col=0
