@@ -459,7 +459,7 @@ class Jugador(pygame.sprite.Sprite):
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Enemigo(pygame.sprite.Sprite):
-    def __init__(self,matriz_img,pos,tipo):
+    def __init__(self,matriz_img,pos,tipo,ene):
         pygame.sprite.Sprite.__init__(self)
         self.matriz_img=matriz_img
         self.tipo=tipo
@@ -474,8 +474,9 @@ class Enemigo(pygame.sprite.Sprite):
         self.vely=0
         self.velx_pro=0
         self.vely_pro=0
-        self.cont_mov=0
+        self.cont_mov=0 #Es para tener la secuencia del enemigo1
         self.vida=100
+        self.ene=ene
 
     def update(self):
         self.rect.x+=self.velx+self.velx_pro
@@ -552,7 +553,6 @@ class Enemigo(pygame.sprite.Sprite):
 
 
         if self.tipo==1:
-            print "ene1: "+str(self.vida)
             if self.cont_mov==0:
                 self.velx_pro=-5
                 self.vely_pro=0
@@ -569,7 +569,6 @@ class Enemigo(pygame.sprite.Sprite):
                 self.cont_mov=-1
             self.cont_mov+=1
         if self.tipo==2:
-            print "ene2: "+str(self.vida)
             if j.rect.right > self.rect.left-20 and j.rect.left < self.rect.right+20:
                 if j.rect.top < self.rect.bottom+20 and j.rect.bottom > self.rect.top-20:
                     if j.rect.left+16 < self.rect.left:
@@ -592,10 +591,33 @@ class Enemigo(pygame.sprite.Sprite):
         #Manejo de danho
         ls_ataque=pygame.sprite.spritecollide(self,ataque_espada,True)
         if  ls_ataque != []:
-            self.vida-=2
+            self.vida-=20
+            print "ene1: "+str(self.vida)
         ls_fle=pygame.sprite.spritecollide(self,ataque_flecha,True)
         if  ls_fle != []:
-            self.vida-=0.5
+            self.vida-=10
+
+        #Muerte
+        if self.vida<=0:
+            if self.tipo==1:
+                if self.ene==0:
+                    ls_ene1[0]=100
+                elif self.ene==1:
+                    ls_ene1[1]=100
+                elif self.ene==2:
+                    ls_ene1[2]=100
+                elif self.ene==3:
+                    ls_ene1[3]=100
+            elif self.tipo==2:
+                if self.ene==0:
+                    ls_ene2[0]=100
+                elif self.ene==1:
+                    ls_ene2[1]=100
+                elif self.ene==2:
+                    ls_ene2[2]=100
+                elif self.ene==3:
+                    ls_ene2[3]=100
+            self.kill()
 
         #Manejo de sprites enemigo
         if self.vely_pro > 0:
@@ -617,7 +639,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.image=self.matriz_img[self.accion][self.cont_accion]
 
 class Generador(pygame.sprite.Sprite):
-    def __init__(self,img,pos,tipo,parser_ene1,parser_ene1_info_mapa,img_ene):
+    def __init__(self,img,pos,tipo):
         pygame.sprite.Sprite.__init__(self)
         self.image=img
         self.tipo=tipo
@@ -626,30 +648,25 @@ class Generador(pygame.sprite.Sprite):
         self.rect.y=pos[1]
         self.velx=0
         self.vely=0
-        self.parser_ene1=parser_ene1
-        self.parser_ene1_info_mapa=parser_ene1_info_mapa
-        self.img_ene=img_ene
+        self.integridad=100
+        self.cantidad_enemigos=1
+        self.lista_pos=[416,704]
 
     def update(self):
         self.rect.x+=self.velx
         self.rect.y+=self.vely
 
-        if self.tipo==1:
-            pos_bloq_col=0
-            pos_bloq_fil=0
+        #Manejo de danho
+        ls_ataque=pygame.sprite.spritecollide(self,ataque_espada,True)
+        if  ls_ataque != []:
+            self.integridad-=20
+        ls_fle=pygame.sprite.spritecollide(self,ataque_flecha,True)
+        if  ls_fle != []:
+            self.integridad-=1
 
-            for i in self.parser_ene1_info_mapa:
-                for e in i:
-                    if self.parser_ene1.get(e,'tipo') == 'vacio':
-                        pos_bloq_col+=1
-                    elif self.parser_ene1.get(e,'tipo') == 'ene1':
-                        ene1=Enemigo(self.img_ene,[pos_bloq_col*32-250,pos_bloq_fil*32-200],1)
-                        enemigos1.add(ene1)
-                        pos_bloq_col+=1
-                pos_bloq_col=0
-                pos_bloq_fil+=1
-        elif self.tipo==2:
-            pass
+        #Muerte
+        if self.integridad<=0:
+            self.kill()
 
 class Bloque(pygame.sprite.Sprite):
     def __init__(self,img,pos):
@@ -698,6 +715,8 @@ class Flecha(pygame.sprite.Sprite):
 if __name__ == '__main__':
     pygame.init()
     #Definicion de variables
+    ls_ene1=[1,1,1,1]
+    ls_ene2=[1,1,1,1]
     reloj=pygame.time.Clock()
     ventana=pygame.display.set_mode([ANCHO,ALTO],32) # Revisar esta instruccion con: ([ANCHO,ALTO],32,32)
 
@@ -747,13 +766,6 @@ if __name__ == '__main__':
     enemigos2.add(ene2)
     '''
 
-    parser_ene1=ConfigParser.ConfigParser()
-    parser_ene1.read('parcer_generador.par')
-
-    parser_ene1_info_img=parser_ene1.get('info','img')
-
-    parser_ene1_info_mapa=parser_ene1.get('info','mapa')
-    parser_ene1_info_mapa=parser_ene1_info_mapa.split('\n')
     #fin de constructor enemigo
 
     #constructor de generadores mapa parser
@@ -773,16 +785,16 @@ if __name__ == '__main__':
         for e in i:
             if parser_gene.get(e,'tipo') == 'vacio':
                 pos_bloq_col+=1
-            elif parser_gene.get(e,'tipo') == 'generador':
+            elif parser_gene.get(e,'tipo') == 'generador1':
                 fl=int(parser_gene.get(e,'fil'))
                 cl=int(parser_gene.get(e,"col"))
-                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],1,parser_ene1,parser_ene1_info_mapa,matriz_enemigos_1)
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],1)
                 generadores.add(gene)
                 pos_bloq_col+=1
-            elif parser_gene.get(e,'tipo') == 'generados':
+            elif parser_gene.get(e,'tipo') == 'generador2':
                 fl=int(parser_gene.get(e,'fil'))
                 cl=int(parser_gene.get(e,"col"))
-                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],2,parser_ene1,parser_ene1_info_mapa,matriz_enemigos_2)
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],2)
                 generadores.add(gene)
                 pos_bloq_col+=1
         pos_bloq_col=0
@@ -924,6 +936,57 @@ if __name__ == '__main__':
                     for b in generadores:
                         b.vely=0
 
+
+        #if cont_enem<1:
+        #    cont_enem+=1
+        for a in generadores:
+            #if 0<a.cantidad_enemigos:
+            #    a.cantidad_enemigos-=1
+            if a.integridad>1:
+                if a.tipo==1:
+                    if ls_ene1[0]==1:
+                        ene10=Enemigo(matriz_enemigos_1,[416+f.rect.x,704+f.rect.y],1,0)
+                        enemigos1.add(ene10)
+                    if ls_ene1[1]==1:
+                        ene11=Enemigo(matriz_enemigos_1,[544+f.rect.x,704+f.rect.y],1,1)
+                        enemigos1.add(ene11)
+                    if ls_ene1[2]==1:
+                        ene12=Enemigo(matriz_enemigos_1,[416+f.rect.x,800+f.rect.y],1,2)
+                        enemigos1.add(ene12)
+                    if ls_ene1[3]==1:
+                        ene13=Enemigo(matriz_enemigos_1,[544+f.rect.x,800+f.rect.y],1,3)
+                        enemigos1.add(ene13)
+
+                    if ls_ene1[0]>0:
+                        ls_ene1[0]-=1
+                    if ls_ene1[1]>0:
+                        ls_ene1[1]-=1
+                    if ls_ene1[2]>0:
+                        ls_ene1[2]-=1
+                    if ls_ene1[3]>0:
+                        ls_ene1[3]-=1
+                elif a.tipo==2:
+                    if ls_ene2[0]==1:
+                        ene10=Enemigo(matriz_enemigos_2,[928+f.rect.x,768+f.rect.y],2,0)
+                        enemigos1.add(ene10)
+                    if ls_ene2[1]==1:
+                        ene11=Enemigo(matriz_enemigos_2,[1056+f.rect.x,832+f.rect.y],2,1)
+                        enemigos1.add(ene11)
+                    if ls_ene2[2]==1:
+                        ene12=Enemigo(matriz_enemigos_2,[928+f.rect.x,832+f.rect.y],2,2)
+                        enemigos1.add(ene12)
+                    if ls_ene2[3]==1:
+                        ene13=Enemigo(matriz_enemigos_2,[1088+f.rect.x,928+f.rect.y],2,3)
+                        enemigos1.add(ene13)
+
+                    if ls_ene2[0]>0:
+                        ls_ene2[0]-=1
+                    if ls_ene2[1]>0:
+                        ls_ene2[1]-=1
+                    if ls_ene2[2]>0:
+                        ls_ene2[2]-=1
+                    if ls_ene2[3]>0:
+                        ls_ene2[3]-=1
 
         #Actualizacion de objetos
         jugadores.update()

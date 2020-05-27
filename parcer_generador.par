@@ -45,12 +45,12 @@ tipo=vacio
 fil=0
 col=0
 
-[#]
-tipo=generador
-fil=54
-col=15
-
 [&]
-tipo=generados
+tipo=generador1
 fil=59
 col=28
+
+[#]
+tipo=generador2
+fil=54
+col=15
