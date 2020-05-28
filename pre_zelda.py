@@ -23,6 +23,16 @@ def recorte(img,fil,col,ini_f):
         m.append(fila)
     return m
 
+def recorte_hud(img,fil,col,ini_f):
+    m=[]
+    for i in range(fil):
+        fila=[]
+        for j in range(col):
+            cuadro=img.subsurface(j*142,(i+ini_f)*26,142,26)
+            fila.append(cuadro)
+        m.append(fila)
+    return m
+
 class Fondo(pygame.sprite.Sprite):
     def __init__(self,img,pos):
         pygame.sprite.Sprite.__init__(self)
@@ -67,6 +77,63 @@ class Jugador(pygame.sprite.Sprite):
 
         #Colisiones en el eje Y
         ls_col=pygame.sprite.spritecollide(self,bloques,False)
+        for b in ls_col:
+            if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+8):
+                #print "Colision 1"
+                self.velyp=0
+                self.rect.bottom = b.rect.top
+                f.vely=0
+                for be in bloques:
+                    be.vely=0
+                for be in bloques_agua:
+                    be.vely=0
+                for be in bloques_lava:
+                    be.vely=0
+                for b in enemigos1:
+                    b.vely=0
+                for b in enemigos2:
+                    b.vely=0
+                for b in ataque_flecha:
+                    b.vely=0
+                for b in generadores:
+                    b.vely=0
+                for b in espadas:
+                    b.vely=0
+                for b in arcos:
+                    b.vely=0
+                for b in saluds:
+                    b.vely=0
+                for b in mas_danhio:
+                    b.vely=0
+            elif (self.rect.top < b.rect.bottom) and (self.rect.top >= b.rect.bottom-8):
+                #print "Colision 2"
+                self.velyn=0
+                self.rect.top = b.rect.bottom
+                f.vely=0
+                for be in bloques:
+                    be.vely=0
+                for be in bloques_agua:
+                    be.vely=0
+                for be in bloques_lava:
+                    be.vely=0
+                for b in enemigos1:
+                    b.vely=0
+                for b in enemigos2:
+                    b.vely=0
+                for b in ataque_flecha:
+                    b.vely=0
+                for b in generadores:
+                    b.vely=0
+                for b in espadas:
+                    b.vely=0
+                for b in arcos:
+                    b.vely=0
+                for b in saluds:
+                    b.vely=0
+                for b in mas_danhio:
+                    b.vely=0
+
+        ls_col=pygame.sprite.spritecollide(self,generadores,False)
         for b in ls_col:
             if (self.rect.bottom > b.rect.top) and (self.rect.bottom <= b.rect.top+8):
                 #print "Colision 1"
@@ -183,14 +250,75 @@ class Jugador(pygame.sprite.Sprite):
                 for b in mas_danhio:
                     b.velx=0
 
+        ls_col=pygame.sprite.spritecollide(self,generadores,False)
+        for b in ls_col:
+            if (self.rect.right > b.rect.left) and (self.rect.right <= b.rect.left+8):
+                #print "Colision 3"
+                self.velxp=0
+                self.rect.right = b.rect.left
+                f.velx=0
+                for be in bloques:
+                    be.velx=0
+                for be in bloques_agua:
+                    be.velx=0
+                for be in bloques_lava:
+                    be.velx=0
+                for b in enemigos1:
+                    b.velx=0
+                for b in enemigos2:
+                    b.velx=0
+                for b in ataque_flecha:
+                    b.velx=0
+                for b in generadores:
+                    b.velx=0
+                for b in espadas:
+                    b.velx=0
+                for b in arcos:
+                    b.velx=0
+                for b in saluds:
+                    b.velx=0
+                for b in mas_danhio:
+                    b.velx=0
+            elif (self.rect.left < b.rect.right) and (self.rect.left >= b.rect.right-8):
+                #print "Colision 4"
+                self.velxn=0
+                self.rect.left = b.rect.right
+                f.velx=0
+                for be in bloques:
+                    be.velx=0
+                for be in bloques_agua:
+                    be.velx=0
+                for be in bloques_lava:
+                    be.velx=0
+                for b in enemigos1:
+                    b.velx=0
+                for b in enemigos2:
+                    b.velx=0
+                for b in ataque_flecha:
+                    b.velx=0
+                for b in generadores:
+                    b.velx=0
+                for b in espadas:
+                    b.velx=0
+                for b in arcos:
+                    b.velx=0
+                for b in saluds:
+                    b.velx=0
+                for b in mas_danhio:
+                    b.velx=0
+
         #Colision Mod_espada
         ls_espada=pygame.sprite.spritecollide(self,espadas,True)
         if ls_espada!=[]:
             self.modificadores[0]=True
+            espada_hud=Bloque(matriz_imagenes[57][17],[170,3])
+            huds.add(espada_hud)
         #Colision Mod_arco
         ls_arco=pygame.sprite.spritecollide(self,arcos,True)
         if ls_arco!=[]:
             self.modificadores[1]=True
+            arco_hud=Bloque(matriz_imagenes[60][17],[207,3])
+            huds.add(arco_hud)
         #Colision Mod_salud
         ls_salud=pygame.sprite.spritecollide(self,saluds,True)
         if ls_salud!=[]:
@@ -199,6 +327,8 @@ class Jugador(pygame.sprite.Sprite):
         ls_danho=pygame.sprite.spritecollide(self,mas_danhio,True)
         if ls_danho!=[]:
             self.modificadores[2]=True
+            mas_hud=Bloque(matriz_imagenes[57][29],[244,3])
+            huds.add(mas_hud)
         #Colision enemigos
         ls_enemigo=pygame.sprite.spritecollide(self,enemigos1,False)
         if  ls_enemigo != []:
@@ -376,17 +506,17 @@ class Jugador(pygame.sprite.Sprite):
                     b.velx=-2
                     b.vely=0
                 for b in espadas:
-                    b.vely=-2
-                    b.velx=0
+                    b.velx=-2
+                    b.vely=0
                 for b in arcos:
-                    b.vely=-2
-                    b.velx=0
+                    b.velx=-2
+                    b.vely=0
                 for b in saluds:
-                    b.vely=-2
-                    b.velx=0
+                    b.velx=-2
+                    b.vely=0
                 for b in mas_danhio:
-                    b.vely=-2
-                    b.velx=0
+                    b.velx=-2
+                    b.vely=0
             else:
                 f.velx=-5
                 f.vely=0
@@ -692,8 +822,8 @@ class Enemigo(pygame.sprite.Sprite):
                 self.cont_mov=-1
             self.cont_mov+=1
         if self.tipo==2:
-            if j.rect.right > self.rect.left-20 and j.rect.left < self.rect.right+20:
-                if j.rect.top < self.rect.bottom+20 and j.rect.bottom > self.rect.top-20:
+            if j.rect.right > self.rect.left-60 and j.rect.left < self.rect.right+60:
+                if j.rect.top < self.rect.bottom+60 and j.rect.bottom > self.rect.top-60:
                     if j.rect.left+16 < self.rect.left:
                         self.velx_pro=-2
                         self.vely_pro=0
@@ -849,6 +979,38 @@ class Flecha(pygame.sprite.Sprite):
         self.rect.x+=self.velx+self.velx_pro
         self.rect.y+=self.vely+self.vely_pro
 
+class Hud(pygame.sprite.Sprite):
+    def __init__(self,matriz,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.matriz=matriz
+        self.image=matriz[10][0]
+        self.rect=self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+
+    def update(self):
+        if j.vida>95:
+            self.image=self.matriz[10][0]
+        elif j.vida<=95 and j.vida>85:
+            self.image=self.matriz[9][0]
+        elif j.vida<=85 and j.vida>75:
+            self.image=self.matriz[8][0]
+        elif j.vida<=75 and j.vida>65:
+            self.image=self.matriz[7][0]
+        elif j.vida<=65 and j.vida>55:
+            self.image=self.matriz[6][0]
+        elif j.vida<=55 and j.vida>48:
+            self.image=self.matriz[5][0]
+        elif j.vida<=45 and j.vida>38:
+            self.image=self.matriz[4][0]
+        elif j.vida<=35 and j.vida>28:
+            self.image=self.matriz[3][0]
+        elif j.vida<=25 and j.vida>18:
+            self.image=self.matriz[2][0]
+        elif j.vida<=15 and j.vida>5:
+            self.image=self.matriz[1][0]
+        elif j.vida<=5:
+            self.image=self.matriz[0][0]
 
 if __name__ == '__main__':
     pygame.init()
@@ -867,12 +1029,14 @@ if __name__ == '__main__':
     flecha_izquierda=pygame.image.load('flecha_izquierda.png')
     flecha_arriba=pygame.image.load('flecha_arriba.png')
     flecha_abajo=pygame.image.load('flecha_abajo.png')
+    hud_imagen=pygame.image.load('hud.png')
 
     #recorte de imagenes
     matriz_imagenes=recorte(tileset_img,63,32,0)
     matriz_jugador=recorte(personaje_img,16,8,0)
     matriz_enemigos_1=recorte(enemigos_img,4,3,0)
     matriz_enemigos_2=recorte(enemigos_img,4,3,4)
+    matriz_hud=recorte_hud(hud_imagen,11,1,0)
 
     #creacion de grupos
     fondos=pygame.sprite.Group()
@@ -889,6 +1053,8 @@ if __name__ == '__main__':
     arcos=pygame.sprite.Group()
     saluds=pygame.sprite.Group()
     mas_danhio=pygame.sprite.Group()
+    backs=pygame.sprite.Group()
+    huds=pygame.sprite.Group()
 
     #constructor del fondo
     f=Fondo(fondo_img,[-250,-200])
@@ -984,6 +1150,18 @@ if __name__ == '__main__':
                 gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],2)
                 generadores.add(gene)
                 pos_bloq_col+=1
+            elif parser_gene.get(e,'tipo') == 'caja':
+                fl=int(parser_gene.get(e,'fil'))
+                cl=int(parser_gene.get(e,"col"))
+                gene=Generador(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200],3)
+                generadores.add(gene)
+                pos_bloq_col+=1
+            elif parser_gene.get(e,'tipo') == 'back':
+                fl=int(parser_gene.get(e,'fil'))
+                cl=int(parser_gene.get(e,"col"))
+                back=Bloque(matriz_imagenes[fl][cl],[pos_bloq_col*32-250,pos_bloq_fil*32-200])
+                backs.add(back)
+                pos_bloq_col+=1
         pos_bloq_col=0
         pos_bloq_fil+=1
 
@@ -1025,6 +1203,10 @@ if __name__ == '__main__':
         pos_bloq_col=0
         pos_bloq_fil+=1
     #fin de la constriccion del mapa parser
+
+    #Creacion del hud de salud
+    h=Hud(matriz_hud,[10,10])
+    huds.add(h)
 
 
     fin=False
@@ -1223,6 +1405,7 @@ if __name__ == '__main__':
         arcos.update()
         saluds.update()
         mas_danhio.update()
+        huds.update()
 
         #Actualizacon de imagenes
         ventana.fill(NEGRO)
@@ -1241,6 +1424,8 @@ if __name__ == '__main__':
         arcos.draw(ventana)
         saluds.draw(ventana)
         mas_danhio.draw(ventana)
+        backs.draw(ventana)
+        huds.draw(ventana)
         pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
         pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
         pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
