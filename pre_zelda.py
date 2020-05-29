@@ -309,39 +309,47 @@ class Jugador(pygame.sprite.Sprite):
         #Colision Mod_espada
         ls_espada=pygame.sprite.spritecollide(self,espadas,True)
         if ls_espada!=[]:
+            modificador_efecto.play()
             self.modificadores[0]=True
             espada_hud=Bloque(matriz_imagenes[57][17],[170,3])
             huds.add(espada_hud)
         #Colision Mod_arco
         ls_arco=pygame.sprite.spritecollide(self,arcos,True)
         if ls_arco!=[]:
+            modificador_efecto.play()
             self.modificadores[1]=True
             arco_hud=Bloque(matriz_imagenes[60][17],[207,3])
             huds.add(arco_hud)
         #Colision Mod_salud
         ls_salud=pygame.sprite.spritecollide(self,saluds,True)
         if ls_salud!=[]:
+            modificador_efecto.play()
             self.vida=100
         #Colision Mod_+danho
         ls_danho=pygame.sprite.spritecollide(self,mas_danhio,True)
         if ls_danho!=[]:
+            modificador_efecto.play()
             self.modificadores[2]=True
             mas_hud=Bloque(matriz_imagenes[57][29],[244,3])
             huds.add(mas_hud)
         #Colision enemigos
         ls_enemigo=pygame.sprite.spritecollide(self,enemigos1,False)
         if  ls_enemigo != []:
+            dolor_j_efecto.play()
             self.vida-=5
         ls_enemigo=pygame.sprite.spritecollide(self,enemigos2,False)
         if  ls_enemigo != []:
+            dolor_j_efecto.play()
             self.vida-=5
         #Comportamiento con la lava
         ls_lava=pygame.sprite.spritecollide(self,bloques_lava,False)
         if ls_lava != []:
+            lava_efecto.play()
             self.vida-=1
         #Comportamiento con el agua
         ls_agua=pygame.sprite.spritecollide(self,bloques_agua,False)
         if ls_agua != []:
+            agua_efecto.play()
             self.vely_mojado=3
             if self.velxp+self.velxn==0:
                 self.velx_mojado=0
@@ -847,11 +855,13 @@ class Enemigo(pygame.sprite.Sprite):
         #Manejo de danho
         ls_ataque=pygame.sprite.spritecollide(self,ataque_espada,True)
         if  ls_ataque != []:
+            dolor_ene_efecto.play()
             if j.modificadores[2]==True:
                 self.vida-=20
             self.vida-=20
         ls_fle=pygame.sprite.spritecollide(self,ataque_flecha,True)
         if  ls_fle != []:
+            dolor_ene_efecto.play()
             self.vida-=10
 
         #Muerte
@@ -916,9 +926,11 @@ class Generador(pygame.sprite.Sprite):
         #Manejo de danho
         ls_ataque=pygame.sprite.spritecollide(self,ataque_espada,True)
         if  ls_ataque != []:
+            generador_efecto.play()
             self.integridad-=20
         ls_fle=pygame.sprite.spritecollide(self,ataque_flecha,True)
         if  ls_fle != []:
+            generador_efecto.play()
             self.integridad-=1
 
         #Muerte
@@ -1025,6 +1037,17 @@ if __name__ == '__main__':
     ventana=pygame.display.set_mode([ANCHO,ALTO],32) # Revisar esta instruccion con: ([ANCHO,ALTO],32,32)
 
     #Carga de sonido y canciones
+    inicio_cancion=pygame.mixer.Sound('Intro.ogg')
+    en_juego_cancion=pygame.mixer.Sound('Aventura.ogg')
+    final_cancion=pygame.mixer.Sound('Ending_final.ogg')
+    agua_efecto=pygame.mixer.Sound('Agua.ogg')
+    lava_efecto=pygame.mixer.Sound('Quemadura.ogg')
+    dolor_ene_efecto=pygame.mixer.Sound('Dolor_enemigo.ogg')
+    dolor_j_efecto=pygame.mixer.Sound('Dolor_link.ogg')
+    espada_efecto=pygame.mixer.Sound('Espada.ogg')
+    flecha_efecto=pygame.mixer.Sound('Flecha.ogg')
+    modificador_efecto=pygame.mixer.Sound('get_item.ogg')
+    generador_efecto=pygame.mixer.Sound('picar_piedra.ogg')
 
     #carga de imagenes
     fondo_img=pygame.image.load('fondo3.png')
@@ -1220,14 +1243,31 @@ if __name__ == '__main__':
 
     fin=False
     en_juego=0
+    inicio_cancion_b=True
+    en_juego_cancion_b=False
+    final_cancion_b=False
     while not fin:
+        #Control de canciones
+        if inicio_cancion_b:
+            inicio_cancion.play(-1)
+            inicio_cancion_b=False
+        elif en_juego_cancion_b:
+            en_juego_cancion.play(-1)
+            en_juego_cancion_b=False
+        elif final_cancion_b:
+            final_cancion.play(-1)
+            final_cancion_b=False
         if en_juego==1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     en_juego=0
+                    en_juego_cancion.stop()
+                    inicio_cancion_b=True
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_p:
                         en_juego=0
+                        en_juego_cancion.stop()
+                        inicio_cancion_b=True
                     elif event.key == pygame.K_RIGHT:
                         j.velxp=5
                         j.velyp=0
@@ -1247,9 +1287,11 @@ if __name__ == '__main__':
                     elif event.key == pygame.K_c:
                         if j.modificadores[0]==True:
                             j.espada=1
+                            espada_efecto.play()
                     elif event.key == pygame.K_x:
                         if j.modificadores[1]==True:
                             j.arco=1
+                            flecha_efecto.play()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RIGHT:
                         j.velxp=0
@@ -1403,8 +1445,14 @@ if __name__ == '__main__':
 
             if integridad_total<=0:
                 en_juego=3
+                inicio_cancion.stop()
+                en_juego_cancion.stop()
+                final_cancion_b=True
             if j.vida<=0:
                 en_juego=2
+                inicio_cancion.stop()
+                en_juego_cancion.stop()
+                final_cancion_b=True
 
             #Actualizacion de objetos
             jugadores.update()
@@ -1456,6 +1504,8 @@ if __name__ == '__main__':
                         fin=True
                     elif event.key == pygame.K_RETURN:
                         en_juego=1
+                        inicio_cancion.stop()
+                        en_juego_cancion_b=True
 
                 if event.type == pygame.KEYUP:
                     j.velxp=0
@@ -1503,14 +1553,14 @@ if __name__ == '__main__':
 
         elif en_juego==2:
             tiempo_gameover+=1
-            if tiempo_gameover>=20:
+            if tiempo_gameover>=100:
                 fin=True
             ventana.blit(fin_imagen,[0,0])
             pygame.display.flip()
             reloj.tick(15)
         elif en_juego==3:
             tiempo_gameover+=1
-            if tiempo_gameover>=20:
+            if tiempo_gameover>=100:
                 fin=True
             ventana.blit(victoria_imagen,[0,0])
             pygame.display.flip()
