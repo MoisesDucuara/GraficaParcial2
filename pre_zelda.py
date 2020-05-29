@@ -1024,6 +1024,8 @@ if __name__ == '__main__':
     reloj=pygame.time.Clock()
     ventana=pygame.display.set_mode([ANCHO,ALTO],32) # Revisar esta instruccion con: ([ANCHO,ALTO],32,32)
 
+    #Carga de sonido y canciones
+
     #carga de imagenes
     fondo_img=pygame.image.load('fondo3.png')
     tileset_img=pygame.image.load('set_rpg.png')
