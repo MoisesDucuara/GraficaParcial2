@@ -71,7 +71,6 @@ class Jugador(pygame.sprite.Sprite):
         #self.bloques=None
 
     def update(self):
-        print self.vida
 
         self.rect.y+=self.velyp+self.velyn+self.vely_mojado
 
@@ -354,6 +353,10 @@ class Jugador(pygame.sprite.Sprite):
             self.vely_mojado=0
             self.velx_mojado=0
 
+
+        #Muerte
+        if self.vida<=0:
+            self.kill()
         #Empuje de la caja del moviemiento del mapa
         if self.rect.y > (ALTO-110):
             #print "Caja 1"
@@ -902,7 +905,7 @@ class Generador(pygame.sprite.Sprite):
         self.rect.y=pos[1]
         self.velx=0
         self.vely=0
-        self.integridad=100
+        self.integridad=200
         self.cantidad_enemigos=1
         self.lista_pos=[416,704]
 
@@ -1015,6 +1018,7 @@ class Hud(pygame.sprite.Sprite):
 if __name__ == '__main__':
     pygame.init()
     #Definicion de variables
+    tiempo_gameover=0
     ls_ene1=[1,1,1,1]
     ls_ene2=[1,1,1,1]
     reloj=pygame.time.Clock()
@@ -1030,6 +1034,9 @@ if __name__ == '__main__':
     flecha_arriba=pygame.image.load('flecha_arriba.png')
     flecha_abajo=pygame.image.load('flecha_abajo.png')
     hud_imagen=pygame.image.load('hud.png')
+    inicio_imagen=pygame.image.load('menu.jpg')
+    fin_imagen=pygame.image.load('gameover.jpg')
+    victoria_imagen=pygame.image.load('victory.jpg')
 
     #recorte de imagenes
     matriz_imagenes=recorte(tileset_img,63,32,0)
@@ -1210,225 +1217,299 @@ if __name__ == '__main__':
 
 
     fin=False
+    en_juego=0
     while not fin:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        if en_juego==1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    en_juego=0
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        en_juego=0
+                    elif event.key == pygame.K_RIGHT:
+                        j.velxp=5
+                        j.velyp=0
+                        j.velyn=0
+                    elif event.key == pygame.K_LEFT:
+                        j.velxn=-5
+                        j.velyp=0
+                        j.velyn=0
+                    elif event.key == pygame.K_UP:
+                        j.velyn=-5
+                        j.velxp=0
+                        j.velxn=0
+                    elif event.key == pygame.K_DOWN:
+                        j.velyp=5
+                        j.velxp=0
+                        j.velxn=0
+                    elif event.key == pygame.K_c:
+                        if j.modificadores[0]==True:
+                            j.espada=1
+                    elif event.key == pygame.K_x:
+                        if j.modificadores[1]==True:
+                            j.arco=1
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RIGHT:
+                        j.velxp=0
+                        f.velx=0
+                        for b in bloques:
+                            b.velx=0
+                        for b in bloques_agua:
+                            b.velx=0
+                        for b in bloques_lava:
+                            b.velx=0
+                        for b in enemigos1:
+                            b.velx=0
+                        for b in enemigos2:
+                            b.velx=0
+                        for b in ataque_flecha:
+                            b.velx=0
+                        for b in generadores:
+                            b.velx=0
+                        for b in espadas:
+                            b.velx=0
+                        for b in arcos:
+                            b.velx=0
+                        for b in saluds:
+                            b.velx=0
+                        for b in mas_danhio:
+                            b.velx=0
+                    elif event.key == pygame.K_LEFT:
+                        j.velxn=0
+                        f.velx=0
+                        for b in bloques:
+                            b.velx=0
+                        for b in bloques_agua:
+                            b.velx=0
+                        for b in bloques_lava:
+                            b.velx=0
+                        for b in enemigos1:
+                            b.velx=0
+                        for b in enemigos2:
+                            b.velx=0
+                        for b in ataque_flecha:
+                            b.velx=0
+                        for b in generadores:
+                            b.velx=0
+                        for b in espadas:
+                            b.velx=0
+                        for b in arcos:
+                            b.velx=0
+                        for b in saluds:
+                            b.velx=0
+                        for b in mas_danhio:
+                            b.velx=0
+                    elif event.key == pygame.K_UP:
+                        j.velyn=0
+                        f.vely=0
+                        for b in bloques:
+                            b.vely=0
+                        for b in bloques_agua:
+                            b.vely=0
+                        for b in bloques_lava:
+                            b.vely=0
+                        for b in enemigos1:
+                            b.vely=0
+                        for b in enemigos2:
+                            b.vely=0
+                        for b in ataque_flecha:
+                            b.vely=0
+                        for b in generadores:
+                            b.vely=0
+                        for b in espadas:
+                            b.vely=0
+                        for b in arcos:
+                            b.vely=0
+                        for b in saluds:
+                            b.vely=0
+                        for b in mas_danhio:
+                            b.vely=0
+                    elif event.key == pygame.K_DOWN:
+                        j.velyp=0
+                        f.vely=0
+                        for b in bloques:
+                            b.vely=0
+                        for b in bloques_agua:
+                            b.vely=0
+                        for b in bloques_lava:
+                            b.vely=0
+                        for b in enemigos1:
+                            b.vely=0
+                        for b in enemigos2:
+                            b.vely=0
+                        for b in ataque_flecha:
+                            b.vely=0
+                        for b in generadores:
+                            b.vely=0
+                        for b in espadas:
+                            b.vely=0
+                        for b in arcos:
+                            b.vely=0
+                        for b in saluds:
+                            b.vely=0
+                        for b in mas_danhio:
+                            b.vely=0
+
+            integridad_total=0
+            for a in generadores:
+                integridad_total+=a.integridad
+                if a.integridad>1:
+                    if a.tipo==1:
+                        if ls_ene1[0]==1:
+                            ene10=Enemigo(matriz_enemigos_1,[416+f.rect.x,704+f.rect.y],1,0)
+                            enemigos1.add(ene10)
+                        if ls_ene1[1]==1:
+                            ene11=Enemigo(matriz_enemigos_1,[544+f.rect.x,704+f.rect.y],1,1)
+                            enemigos1.add(ene11)
+                        if ls_ene1[2]==1:
+                            ene12=Enemigo(matriz_enemigos_1,[416+f.rect.x,800+f.rect.y],1,2)
+                            enemigos1.add(ene12)
+                        if ls_ene1[3]==1:
+                            ene13=Enemigo(matriz_enemigos_1,[544+f.rect.x,800+f.rect.y],1,3)
+                            enemigos1.add(ene13)
+
+                        if ls_ene1[0]>0:
+                            ls_ene1[0]-=1
+                        if ls_ene1[1]>0:
+                            ls_ene1[1]-=1
+                        if ls_ene1[2]>0:
+                            ls_ene1[2]-=1
+                        if ls_ene1[3]>0:
+                            ls_ene1[3]-=1
+                    elif a.tipo==2:
+                        if ls_ene2[0]==1:
+                            ene10=Enemigo(matriz_enemigos_2,[928+f.rect.x,768+f.rect.y],2,0)
+                            enemigos1.add(ene10)
+                        if ls_ene2[1]==1:
+                            ene11=Enemigo(matriz_enemigos_2,[1056+f.rect.x,832+f.rect.y],2,1)
+                            enemigos1.add(ene11)
+                        if ls_ene2[2]==1:
+                            ene12=Enemigo(matriz_enemigos_2,[928+f.rect.x,832+f.rect.y],2,2)
+                            enemigos1.add(ene12)
+                        if ls_ene2[3]==1:
+                            ene13=Enemigo(matriz_enemigos_2,[1088+f.rect.x,928+f.rect.y],2,3)
+                            enemigos1.add(ene13)
+
+                        if ls_ene2[0]>0:
+                            ls_ene2[0]-=1
+                        if ls_ene2[1]>0:
+                            ls_ene2[1]-=1
+                        if ls_ene2[2]>0:
+                            ls_ene2[2]-=1
+                        if ls_ene2[3]>0:
+                            ls_ene2[3]-=1
+
+            if integridad_total<=0:
+                en_juego=3
+            if j.vida<=0:
+                en_juego=2
+
+            #Actualizacion de objetos
+            jugadores.update()
+            fondos.update()
+            bloques.update()
+            bloques_agua.update()
+            bloques_lava.update()
+            ataque_flecha.update()
+            generadores.update()
+            enemigos1.update()
+            enemigos2.update()
+            espadas.update()
+            arcos.update()
+            saluds.update()
+            mas_danhio.update()
+            huds.update()
+
+            #Actualizacon de imagenes
+            ventana.fill(NEGRO)
+            #ventana.blit(fondo_img,[0,0])
+            fondos.draw(ventana)
+            bloques.draw(ventana)
+            bloques_agua.draw(ventana)
+            bloques_lava.draw(ventana)
+            ataque_espada.draw(ventana)
+            ataque_flecha.draw(ventana)
+            generadores.draw(ventana)
+            enemigos1.draw(ventana)
+            enemigos2.draw(ventana)
+            jugadores.draw(ventana)
+            espadas.draw(ventana)
+            arcos.draw(ventana)
+            saluds.draw(ventana)
+            mas_danhio.draw(ventana)
+            backs.draw(ventana)
+            huds.draw(ventana)
+            pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
+            pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
+            pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
+            pygame.draw.line(ventana, BLANCO, [0,ALTO-78], [ANCHO,ALTO-78])
+            pygame.display.flip()
+            reloj.tick(15)
+        elif en_juego==0:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    fin=True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        fin=True
+                    elif event.key == pygame.K_RETURN:
+                        en_juego=1
+
+                if event.type == pygame.KEYUP:
+                    j.velxp=0
+                    j.velxn=0
+                    j.velyp=0
+                    j.velyn=0
+                    f.velx=0
+                    f.vely=0
+                    for b in bloques:
+                        b.velx=0
+                        b.vely=0
+                    for b in bloques_agua:
+                        b.velx=0
+                        b.vely=0
+                    for b in bloques_lava:
+                        b.velx=0
+                        b.vely=0
+                    for b in enemigos1:
+                        b.velx=0
+                        b.vely=0
+                    for b in enemigos2:
+                        b.velx=0
+                        b.vely=0
+                    for b in ataque_flecha:
+                        b.velx=0
+                        b.vely=0
+                    for b in generadores:
+                        b.velx=0
+                        b.vely=0
+                    for b in espadas:
+                        b.velx=0
+                        b.vely=0
+                    for b in arcos:
+                        b.velx=0
+                        b.vely=0
+                    for b in saluds:
+                        b.velx=0
+                        b.vely=0
+                    for b in mas_danhio:
+                        b.velx=0
+                        b.vely=0
+
+            ventana.blit(inicio_imagen,[0,0])
+            pygame.display.flip()
+
+        elif en_juego==2:
+            tiempo_gameover+=1
+            if tiempo_gameover>=20:
                 fin=True
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    j.velxp=5
-                    j.velyp=0
-                    j.velyn=0
-                elif event.key == pygame.K_LEFT:
-                    j.velxn=-5
-                    j.velyp=0
-                    j.velyn=0
-                elif event.key == pygame.K_UP:
-                    j.velyn=-5
-                    j.velxp=0
-                    j.velxn=0
-                elif event.key == pygame.K_DOWN:
-                    j.velyp=5
-                    j.velxp=0
-                    j.velxn=0
-                elif event.key == pygame.K_c:
-                    if j.modificadores[0]==True:
-                        j.espada=1
-                elif event.key == pygame.K_x:
-                    if j.modificadores[1]==True:
-                        j.arco=1
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_RIGHT:
-                    j.velxp=0
-                    f.velx=0
-                    for b in bloques:
-                        b.velx=0
-                    for b in bloques_agua:
-                        b.velx=0
-                    for b in bloques_lava:
-                        b.velx=0
-                    for b in enemigos1:
-                        b.velx=0
-                    for b in enemigos2:
-                        b.velx=0
-                    for b in ataque_flecha:
-                        b.velx=0
-                    for b in generadores:
-                        b.velx=0
-                    for b in espadas:
-                        b.velx=0
-                    for b in arcos:
-                        b.velx=0
-                    for b in saluds:
-                        b.velx=0
-                    for b in mas_danhio:
-                        b.velx=0
-                elif event.key == pygame.K_LEFT:
-                    j.velxn=0
-                    f.velx=0
-                    for b in bloques:
-                        b.velx=0
-                    for b in bloques_agua:
-                        b.velx=0
-                    for b in bloques_lava:
-                        b.velx=0
-                    for b in enemigos1:
-                        b.velx=0
-                    for b in enemigos2:
-                        b.velx=0
-                    for b in ataque_flecha:
-                        b.velx=0
-                    for b in generadores:
-                        b.velx=0
-                    for b in espadas:
-                        b.velx=0
-                    for b in arcos:
-                        b.velx=0
-                    for b in saluds:
-                        b.velx=0
-                    for b in mas_danhio:
-                        b.velx=0
-                elif event.key == pygame.K_UP:
-                    j.velyn=0
-                    f.vely=0
-                    for b in bloques:
-                        b.vely=0
-                    for b in bloques_agua:
-                        b.vely=0
-                    for b in bloques_lava:
-                        b.vely=0
-                    for b in enemigos1:
-                        b.vely=0
-                    for b in enemigos2:
-                        b.vely=0
-                    for b in ataque_flecha:
-                        b.vely=0
-                    for b in generadores:
-                        b.vely=0
-                    for b in espadas:
-                        b.vely=0
-                    for b in arcos:
-                        b.vely=0
-                    for b in saluds:
-                        b.vely=0
-                    for b in mas_danhio:
-                        b.vely=0
-                elif event.key == pygame.K_DOWN:
-                    j.velyp=0
-                    f.vely=0
-                    for b in bloques:
-                        b.vely=0
-                    for b in bloques_agua:
-                        b.vely=0
-                    for b in bloques_lava:
-                        b.vely=0
-                    for b in enemigos1:
-                        b.vely=0
-                    for b in enemigos2:
-                        b.vely=0
-                    for b in ataque_flecha:
-                        b.vely=0
-                    for b in generadores:
-                        b.vely=0
-                    for b in espadas:
-                        b.vely=0
-                    for b in arcos:
-                        b.vely=0
-                    for b in saluds:
-                        b.vely=0
-                    for b in mas_danhio:
-                        b.vely=0
-
-
-        #if cont_enem<1:
-        #    cont_enem+=1
-        for a in generadores:
-            #if 0<a.cantidad_enemigos:
-            #    a.cantidad_enemigos-=1
-            if a.integridad>1:
-                if a.tipo==1:
-                    if ls_ene1[0]==1:
-                        ene10=Enemigo(matriz_enemigos_1,[416+f.rect.x,704+f.rect.y],1,0)
-                        enemigos1.add(ene10)
-                    if ls_ene1[1]==1:
-                        ene11=Enemigo(matriz_enemigos_1,[544+f.rect.x,704+f.rect.y],1,1)
-                        enemigos1.add(ene11)
-                    if ls_ene1[2]==1:
-                        ene12=Enemigo(matriz_enemigos_1,[416+f.rect.x,800+f.rect.y],1,2)
-                        enemigos1.add(ene12)
-                    if ls_ene1[3]==1:
-                        ene13=Enemigo(matriz_enemigos_1,[544+f.rect.x,800+f.rect.y],1,3)
-                        enemigos1.add(ene13)
-
-                    if ls_ene1[0]>0:
-                        ls_ene1[0]-=1
-                    if ls_ene1[1]>0:
-                        ls_ene1[1]-=1
-                    if ls_ene1[2]>0:
-                        ls_ene1[2]-=1
-                    if ls_ene1[3]>0:
-                        ls_ene1[3]-=1
-                elif a.tipo==2:
-                    if ls_ene2[0]==1:
-                        ene10=Enemigo(matriz_enemigos_2,[928+f.rect.x,768+f.rect.y],2,0)
-                        enemigos1.add(ene10)
-                    if ls_ene2[1]==1:
-                        ene11=Enemigo(matriz_enemigos_2,[1056+f.rect.x,832+f.rect.y],2,1)
-                        enemigos1.add(ene11)
-                    if ls_ene2[2]==1:
-                        ene12=Enemigo(matriz_enemigos_2,[928+f.rect.x,832+f.rect.y],2,2)
-                        enemigos1.add(ene12)
-                    if ls_ene2[3]==1:
-                        ene13=Enemigo(matriz_enemigos_2,[1088+f.rect.x,928+f.rect.y],2,3)
-                        enemigos1.add(ene13)
-
-                    if ls_ene2[0]>0:
-                        ls_ene2[0]-=1
-                    if ls_ene2[1]>0:
-                        ls_ene2[1]-=1
-                    if ls_ene2[2]>0:
-                        ls_ene2[2]-=1
-                    if ls_ene2[3]>0:
-                        ls_ene2[3]-=1
-
-        #Actualizacion de objetos
-        jugadores.update()
-        fondos.update()
-        bloques.update()
-        bloques_agua.update()
-        bloques_lava.update()
-        ataque_flecha.update()
-        generadores.update()
-        enemigos1.update()
-        enemigos2.update()
-        espadas.update()
-        arcos.update()
-        saluds.update()
-        mas_danhio.update()
-        huds.update()
-
-        #Actualizacon de imagenes
-        ventana.fill(NEGRO)
-        #ventana.blit(fondo_img,[0,0])
-        fondos.draw(ventana)
-        bloques.draw(ventana)
-        bloques_agua.draw(ventana)
-        bloques_lava.draw(ventana)
-        ataque_espada.draw(ventana)
-        ataque_flecha.draw(ventana)
-        generadores.draw(ventana)
-        enemigos1.draw(ventana)
-        enemigos2.draw(ventana)
-        jugadores.draw(ventana)
-        espadas.draw(ventana)
-        arcos.draw(ventana)
-        saluds.draw(ventana)
-        mas_danhio.draw(ventana)
-        backs.draw(ventana)
-        huds.draw(ventana)
-        pygame.draw.line(ventana, BLANCO, [150,0], [150,ALTO])
-        pygame.draw.line(ventana, BLANCO, [ANCHO-168,0], [ANCHO-168,ALTO])
-        pygame.draw.line(ventana, BLANCO, [0,70], [ANCHO,70])
-        pygame.draw.line(ventana, BLANCO, [0,ALTO-78], [ANCHO,ALTO-78])
-        pygame.display.flip()
-        reloj.tick(15)
+            ventana.blit(fin_imagen,[0,0])
+            pygame.display.flip()
+            reloj.tick(15)
+        elif en_juego==3:
+            tiempo_gameover+=1
+            if tiempo_gameover>=20:
+                fin=True
+            ventana.blit(victoria_imagen,[0,0])
+            pygame.display.flip()
+            reloj.tick(15)
